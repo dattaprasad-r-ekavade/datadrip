@@ -1,18 +1,23 @@
 # DataDrip MVP Development Task Plan
 
 ## Overview
+
 This document outlines the step-by-step development tasks to build the DataDrip MVP - a marketing analytics platform for agencies managing Meta and Google Ads campaigns.
 
 **Target Timeline**: 16 weeks (updated to include admin features)  
 **Goal**: Launch-ready MVP with authentication, integrations, automated reporting, multi-provider AI insights, and comprehensive admin controls
 
+**Current Status**: Sprint 1 complete (Weeks 1-2). Remaining timeline: 14 weeks across Sprints 2-8.
+
 **Key Features**:
+
 - Multi-provider AI support (OpenAI, Anthropic, Google Gemini, Azure OpenAI) with admin-configurable switching
 - Dynamic pricing plans managed from admin panel
 - AI feature toggle per agency
 - Comprehensive admin dashboard for platform configuration
 
 **📚 Related Documentation**:
+
 - **Setup & Requirements**: `requirements.md` - Complete guide for all external services, API keys, and configurations
 - **Admin Features Guide**: `admin-guide.md` - Quick reference for admin panel features and workflows
 - **Technical Architecture**: `technical-plan.md` - System design and architecture decisions
@@ -20,93 +25,10 @@ This document outlines the step-by-step development tasks to build the DataDrip 
 
 ---
 
-## 🚀 Sprint 1: Project Foundation & Authentication (Weeks 1-2)
-
-### Task 1.1: Initialize Next.js Project
-- [ ] Create new Next.js 13+ project with TypeScript
-  ```bash
-  npx create-next-app@latest datadrip --typescript --tailwind --app --use-npm
-  ```
-- [ ] Configure `tsconfig.json` with strict mode
-- [ ] Set up folder structure:
-  - `/app` - Next.js App Router pages
-  - `/components` - Shared UI components
-  - `/lib` - Utilities, DB clients, API helpers
-  - `/prisma` - Database schema and migrations
-  - `/public` - Static assets
-  - `/types` - TypeScript type definitions
-
-### Task 1.2: Install Core Dependencies
-- [ ] Install shadcn/ui and configure
-  ```bash
-  npx shadcn-ui@latest init
-  ```
-- [ ] Install development tools:
-  - ESLint & Prettier
-  - Husky for git hooks
-  - lint-staged
-- [ ] Install core dependencies:
-  - `@prisma/client` & `prisma`
-  - `next-auth` (v5)
-  - `zod` for validation
-  - `react-hook-form`
-  - `dotenv-cli`
-
-### Task 1.3: Database Setup
-- [ ] Create Prisma schema file (`prisma/schema.prisma`)
-- [ ] Copy data models from technical plan (including new models):
-  - User (with `isSuperAdmin` field)
-  - Agency (with `aiEnabled` field)
-  - AIProvider model
-  - PricingPlan model
-  - SystemConfig model
-- [ ] Initialize SQLite for local development
-  ```bash
-  npx prisma init --datasource-provider sqlite
-  ```
-- [ ] Create initial migration
-  ```bash
-  npx prisma migrate dev --name init
-  ```
-- [ ] Set up Prisma Client singleton in `lib/prisma.ts`
-
-### Task 1.4: Authentication Implementation
-- [ ] Configure NextAuth with email provider
-- [ ] Create `/api/auth/[...nextauth]/route.ts`
-- [ ] Set up authentication middleware
-- [ ] Create login page (`/app/login/page.tsx`)
-- [ ] Build magic link email template
-- [ ] Implement session management
-- [ ] Add role-based access control (RBAC) utilities
-- [ ] Create super admin detection middleware
-- [ ] Create protected route wrapper
-- [ ] Build admin route guard
-
-### Task 1.5: Base Layout & UI Shell
-- [ ] Install required shadcn components:
-  - Button, Card, Input, Label, Dropdown
-  - Sidebar, Navigation, Avatar
-- [ ] Create dashboard layout component
-- [ ] Build responsive sidebar navigation
-- [ ] Create top navigation bar with user menu
-- [ ] Add loading states and error boundaries
-- [ ] Set up global styles and theme configuration
-
-### Task 1.6: Environment Configuration
-- [ ] Create `.env.local` template
-- [ ] Document required environment variables:
-  - `DATABASE_URL`
-  - `NEXTAUTH_URL`
-  - `NEXTAUTH_SECRET`
-  - Email provider credentials
-- [ ] Add `.env.example` to repository
-- [ ] Configure environment variables in Vercel
-
----
-
 ## 🏢 Sprint 2: Agency & Client Management (Weeks 3-4)
 
 ### Task 2.1: Agency CRUD Operations
+
 - [ ] Create Agency database model (already in schema)
 - [ ] Build agency service layer (`lib/services/agency.ts`)
 - [ ] Create API routes:
@@ -118,6 +40,7 @@ This document outlines the step-by-step development tasks to build the DataDrip 
 - [ ] Add timezone selector component
 
 ### Task 2.2: Client Management
+
 - [ ] Create client service layer (`lib/services/client.ts`)
 - [ ] Build client CRUD API routes:
   - `POST /api/clients` - Create client
@@ -131,6 +54,7 @@ This document outlines the step-by-step development tasks to build the DataDrip 
 - [ ] Create empty state designs
 
 ### Task 2.3: Team Member Management
+
 - [ ] Build user invitation system
 - [ ] Create invite email templates
 - [ ] Implement invite acceptance flow
@@ -140,6 +64,7 @@ This document outlines the step-by-step development tasks to build the DataDrip 
 - [ ] Add super admin designation (system-level only)
 
 ### Task 2.4: Agency Settings & AI Toggle
+
 - [ ] Build agency settings page
 - [ ] Add AI features enable/disable toggle
 - [ ] Create feature flags service
@@ -148,6 +73,7 @@ This document outlines the step-by-step development tasks to build the DataDrip 
 - [ ] Build settings persistence layer
 
 ### Task 2.4: Agency Settings & AI Toggle
+
 - [ ] Build agency settings page
 - [ ] Add AI features enable/disable toggle
 - [ ] Create feature flags service
@@ -156,6 +82,7 @@ This document outlines the step-by-step development tasks to build the DataDrip 
 - [ ] Build settings persistence layer
 
 ### Task 2.5: Form Validation & Error Handling
+
 - [ ] Set up React Hook Form integration
 - [ ] Create reusable form components
 - [ ] Implement Zod schemas for all forms
@@ -168,6 +95,7 @@ This document outlines the step-by-step development tasks to build the DataDrip 
 ## � Sprint 2.5: Admin Panel Foundation (Week 5)
 
 ### Task 2.5.1: Admin Dashboard Setup
+
 - [ ] Create admin route structure (`/app/admin/`)
 - [ ] Build admin dashboard layout
 - [ ] Add admin navigation menu
@@ -176,6 +104,7 @@ This document outlines the step-by-step development tasks to build the DataDrip 
 - [ ] Add admin activity logging
 
 ### Task 2.5.2: System Configuration Management
+
 - [ ] Create SystemConfig CRUD service
 - [ ] Build configuration UI
 - [ ] Add key-value editor component
@@ -188,6 +117,7 @@ This document outlines the step-by-step development tasks to build the DataDrip 
 ## �🔌 Sprint 3: Platform Integrations (Weeks 6-7)
 
 ### Task 3.1: Meta Marketing API Integration
+
 - [ ] Create Meta OAuth app in Facebook Developers
 - [ ] Implement OAuth flow:
   - Authorization redirect
@@ -202,6 +132,7 @@ This document outlines the step-by-step development tasks to build the DataDrip 
 - [ ] Test with sandbox account
 
 ### Task 3.2: Google Ads API Integration
+
 - [ ] Set up Google Cloud project & OAuth app
 - [ ] Enable Google Ads API
 - [ ] Implement Google OAuth flow
@@ -211,6 +142,7 @@ This document outlines the step-by-step development tasks to build the DataDrip 
 - [ ] Test with test account
 
 ### Task 3.3: Token Management & Refresh
+
 - [ ] Create token refresh cron job (`/api/cron/refresh-tokens`)
 - [ ] Set up Vercel Cron configuration
 - [ ] Implement automatic token refresh logic
@@ -219,6 +151,7 @@ This document outlines the step-by-step development tasks to build the DataDrip 
 - [ ] Build alerts for expired tokens
 
 ### Task 3.4: Initial Data Sync Service
+
 - [ ] Create data sync service (`lib/services/sync.ts`)
 - [ ] Implement Meta campaigns fetch
 - [ ] Implement Google Ads campaigns fetch
@@ -232,6 +165,7 @@ This document outlines the step-by-step development tasks to build the DataDrip 
 ## 📊 Sprint 4: Data Processing & Dashboard (Weeks 8-9)
 
 ### Task 4.1: ETL Pipeline Development
+
 - [ ] Create data normalization service
 - [ ] Build metric transformation functions
 - [ ] Implement `CampaignMetric` population logic
@@ -240,6 +174,7 @@ This document outlines the step-by-step development tasks to build the DataDrip 
 - [ ] Build retry mechanism for failed data pulls
 
 ### Task 4.2: Analytics Queries & Aggregations
+
 - [ ] Create analytics service (`lib/services/analytics.ts`)
 - [ ] Implement aggregation queries:
   - Total spend by platform
@@ -252,6 +187,7 @@ This document outlines the step-by-step development tasks to build the DataDrip 
 - [ ] Implement caching with Redis (Upstash)
 
 ### Task 4.3: Dashboard UI Components
+
 - [ ] Install and configure recharts
 - [ ] Create metric card component
 - [ ] Build line chart for spend trends
@@ -261,6 +197,7 @@ This document outlines the step-by-step development tasks to build the DataDrip 
 - [ ] Implement platform filter toggles
 
 ### Task 4.4: Dashboard Pages
+
 - [ ] Create main dashboard page (`/app/dashboard/page.tsx`)
 - [ ] Implement Server Components for data fetching
 - [ ] Add Suspense boundaries with loading states
@@ -274,6 +211,7 @@ This document outlines the step-by-step development tasks to build the DataDrip 
 ## 📧 Sprint 5: Automated Reporting (Weeks 10-11)
 
 ### Task 5.1: Report Template System
+
 - [ ] Install `@react-email/components`
 - [ ] Create report email templates
 - [ ] Build HTML report generator
@@ -282,6 +220,7 @@ This document outlines the step-by-step development tasks to build the DataDrip 
 - [ ] Create report preview functionality
 
 ### Task 5.2: Email Service Integration
+
 - [ ] Set up Resend account
 - [ ] Install Resend SDK
 - [ ] Create email service wrapper (`lib/services/email.ts`)
@@ -290,6 +229,7 @@ This document outlines the step-by-step development tasks to build the DataDrip 
 - [ ] Handle bounce and error notifications
 
 ### Task 5.3: Report Generation Engine
+
 - [ ] Create report generation service
 - [ ] Build data aggregation for reports
 - [ ] Implement summary text generation
@@ -298,6 +238,7 @@ This document outlines the step-by-step development tasks to build the DataDrip 
 - [ ] Store generated reports in database
 
 ### Task 5.4: Report Scheduling
+
 - [ ] Create daily report cron job (`/api/cron/generate-reports`)
 - [ ] Configure Vercel Cron for report schedule
 - [ ] Implement per-client scheduling logic
@@ -306,6 +247,7 @@ This document outlines the step-by-step development tasks to build the DataDrip 
 - [ ] Create manual report trigger button
 
 ### Task 5.5: Report Management UI
+
 - [ ] Create reports list page
 - [ ] Build report preview modal
 - [ ] Add resend report functionality
@@ -318,6 +260,7 @@ This document outlines the step-by-step development tasks to build the DataDrip 
 ## 🤖 Sprint 6: Multi-Provider AI Insights Engine (Weeks 12-13)
 
 ### Task 6.1: AI Provider Management (Admin)
+
 - [ ] Create AIProvider CRUD service (`lib/services/ai-provider.ts`)
 - [ ] Build AI provider API routes:
   - `POST /api/admin/ai-providers` - Add provider
@@ -332,6 +275,7 @@ This document outlines the step-by-step development tasks to build the DataDrip 
 - [ ] Create secure API key storage (encrypted)
 
 ### Task 6.2: Multi-Provider AI Integration
+
 - [ ] Install AI SDKs:
   - `openai` - OpenAI
   - `@anthropic-ai/sdk` - Anthropic Claude
@@ -349,6 +293,7 @@ This document outlines the step-by-step development tasks to build the DataDrip 
 - [ ] Create rate limiting per provider
 
 ### Task 6.3: Prompt Engineering
+
 - [ ] Create prompt templates for:
   - Performance insights
   - Budget recommendations
@@ -361,6 +306,7 @@ This document outlines the step-by-step development tasks to build the DataDrip 
 - [ ] Test prompts with all providers
 
 ### Task 6.4: Insight Generation Service
+
 - [ ] Update insight generation service
 - [ ] Check agency AI enabled status before generation
 - [ ] Build data extraction for AI context
@@ -372,6 +318,7 @@ This document outlines the step-by-step development tasks to build the DataDrip 
 - [ ] Add per-agency AI usage tracking
 
 ### Task 6.5: Insights UI
+
 - [ ] Create insights dashboard page
 - [ ] Build insight card components
 - [ ] Add filtering by type and status
@@ -383,6 +330,7 @@ This document outlines the step-by-step development tasks to build the DataDrip 
 - [ ] Show "AI Disabled" state when turned off
 
 ### Task 6.6: Caching & Optimization
+
 - [ ] Implement prompt response caching
 - [ ] Add deduplication logic for similar insights
 - [ ] Create cache invalidation strategy
@@ -396,6 +344,7 @@ This document outlines the step-by-step development tasks to build the DataDrip 
 ## 💰 Sprint 6.5: Dynamic Pricing Management (Week 14)
 
 ### Task 6.5.1: Pricing Plan Management (Admin)
+
 - [ ] Create PricingPlan CRUD service (`lib/services/pricing.ts`)
 - [ ] Build pricing API routes:
   - `POST /api/admin/pricing` - Create plan
@@ -414,6 +363,7 @@ This document outlines the step-by-step development tasks to build the DataDrip 
 - [ ] Implement plan activation/deactivation
 
 ### Task 6.5.2: Public Pricing Page
+
 - [ ] Create public pricing page (`/pricing`)
 - [ ] Fetch active plans from database
 - [ ] Build responsive pricing cards
@@ -423,6 +373,7 @@ This document outlines the step-by-step development tasks to build the DataDrip 
 - [ ] Add pricing FAQ section
 
 ### Task 6.5.3: Plan Enforcement
+
 - [ ] Update agency plan assignment
 - [ ] Implement plan limit checks:
   - Client count limits
@@ -439,6 +390,7 @@ This document outlines the step-by-step development tasks to build the DataDrip 
 ## 🔒 Sprint 7: Security & Compliance (Weeks 15-16)
 
 ### Task 7.1: Audit Logging
+
 - [ ] Create audit log table/model
 - [ ] Build audit logging middleware
 - [ ] Capture all data mutations
@@ -447,6 +399,7 @@ This document outlines the step-by-step development tasks to build the DataDrip 
 - [ ] Create audit log viewer UI
 
 ### Task 7.2: Access Control Hardening
+
 - [ ] Implement route-level authorization
 - [ ] Add RBAC checks in API routes
 - [ ] Add super admin route protection
@@ -457,6 +410,7 @@ This document outlines the step-by-step development tasks to build the DataDrip 
 - [ ] Implement admin action logging
 
 ### Task 7.3: Usage Limits & Plan Management
+
 - [ ] Implement plan tier limits
 - [ ] Create usage tracking service
 - [ ] Add client count limits
@@ -465,6 +419,7 @@ This document outlines the step-by-step development tasks to build the DataDrip 
 - [ ] Create upgrade flow UI
 
 ### Task 7.4: Security Enhancements
+
 - [ ] Implement CSRF protection
 - [ ] Add rate limiting with Upstash Redis
 - [ ] Set up Snyk vulnerability scanning
@@ -476,6 +431,7 @@ This document outlines the step-by-step development tasks to build the DataDrip 
 - [ ] Add API key rotation mechanism
 
 ### Task 7.5: Data Protection
+
 - [ ] Audit token encryption implementation
 - [ ] Add data export functionality (GDPR)
 - [ ] Create data deletion endpoints
@@ -488,6 +444,7 @@ This document outlines the step-by-step development tasks to build the DataDrip 
 ## 🚢 Sprint 8: Launch Preparation (Week 17)
 
 ### Task 8.1: Testing Infrastructure
+
 - [ ] Install Playwright for E2E tests
 - [ ] Create smoke test suite
 - [ ] Build authentication flow tests
@@ -497,6 +454,7 @@ This document outlines the step-by-step development tasks to build the DataDrip 
 - [ ] Set up CI pipeline in GitHub Actions
 
 ### Task 8.2: Performance Optimization
+
 - [ ] Run Lighthouse audits
 - [ ] Optimize images and assets
 - [ ] Implement code splitting
@@ -506,6 +464,7 @@ This document outlines the step-by-step development tasks to build the DataDrip 
 - [ ] Test Core Web Vitals
 
 ### Task 8.3: Staging Environment Setup
+
 - [ ] Create staging Vercel project
 - [ ] Set up PlanetScale database branch
 - [ ] Configure staging environment variables (including test AI keys)
@@ -518,6 +477,7 @@ This document outlines the step-by-step development tasks to build the DataDrip 
 - [ ] Conduct UAT with stakeholders
 
 ### Task 8.4: Production Deployment
+
 - [ ] Review production environment variables
 - [ ] Set up PlanetScale production database
 - [ ] Configure Redis (Upstash) for production
@@ -527,6 +487,7 @@ This document outlines the step-by-step development tasks to build the DataDrip 
 - [ ] Test all integrations in production
 
 ### Task 8.5: Monitoring & Observability
+
 - [ ] Set up Sentry error tracking
 - [ ] Configure Vercel Analytics
 - [ ] Add custom logging with Logtail
@@ -536,6 +497,7 @@ This document outlines the step-by-step development tasks to build the DataDrip 
 - [ ] Build ops dashboard
 
 ### Task 8.6: Documentation & Training
+
 - [ ] Write user documentation
 - [ ] Create admin guide (AI provider setup, pricing management)
 - [ ] Document API endpoints
@@ -547,6 +509,7 @@ This document outlines the step-by-step development tasks to build the DataDrip 
 - [ ] Prepare onboarding materials
 
 ### Task 8.7: Launch Checklist
+
 - [ ] Final security review
 - [ ] Performance benchmarking
 - [ ] Accessibility audit (WCAG 2.1)
@@ -566,6 +529,7 @@ This document outlines the step-by-step development tasks to build the DataDrip 
 ## 📋 Post-Launch Tasks
 
 ### Immediate (Week 18+)
+
 - [ ] Monitor error rates and performance
 - [ ] Track AI provider usage and costs
 - [ ] Collect user feedback
@@ -577,6 +541,7 @@ This document outlines the step-by-step development tasks to build the DataDrip 
 - [ ] Adjust pricing based on market feedback
 
 ### Short-term (Months 2-3)
+
 - [ ] Add more AI insight types
 - [ ] Implement custom report scheduling
 - [ ] Add webhook notifications
@@ -588,6 +553,7 @@ This document outlines the step-by-step development tasks to build the DataDrip 
 - [ ] Build subscription billing (Stripe/Razorpay)
 
 ### Long-term (Months 4-6)
+
 - [ ] Build white-label solution
 - [ ] Add client portal for end-clients
 - [ ] Implement predictive analytics
@@ -602,6 +568,7 @@ This document outlines the step-by-step development tasks to build the DataDrip 
 ## 🛠️ Development Best Practices
 
 ### Code Quality
+
 - Write unit tests for all business logic
 - Use TypeScript strict mode
 - Follow component naming conventions
@@ -610,6 +577,7 @@ This document outlines the step-by-step development tasks to build the DataDrip 
 - Run ESLint before commits
 
 ### Git Workflow
+
 - Use feature branches (`feature/task-name`)
 - Write descriptive commit messages
 - Keep PRs focused and small
@@ -618,6 +586,7 @@ This document outlines the step-by-step development tasks to build the DataDrip 
 - Tag releases with semantic versioning
 
 ### Performance Guidelines
+
 - Use Server Components by default
 - Minimize client-side JavaScript
 - Implement proper caching strategies
@@ -626,6 +595,7 @@ This document outlines the step-by-step development tasks to build the DataDrip 
 - Lazy load heavy components
 
 ### Security Practices
+
 - Never commit secrets to repository
 - Use environment variables for all configs
 - Implement proper input validation
@@ -638,6 +608,7 @@ This document outlines the step-by-step development tasks to build the DataDrip 
 ## 📊 Success Metrics
 
 ### Technical Metrics
+
 - Page load time < 2 seconds
 - API response time < 500ms (p95)
 - Uptime > 99.5%
@@ -646,6 +617,7 @@ This document outlines the step-by-step development tasks to build the DataDrip 
 - Lighthouse score > 90
 
 ### Business Metrics
+
 - Daily active users
 - Report open rates
 - Insight application rate
@@ -666,6 +638,7 @@ This document outlines the step-by-step development tasks to build the DataDrip 
 ---
 
 ## Notes
+
 - Adjust timeline based on team size and availability
 - Prioritize features based on user feedback
 - Consider parallel development where possible
