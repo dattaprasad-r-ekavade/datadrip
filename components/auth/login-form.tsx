@@ -74,7 +74,8 @@ export function LoginForm() {
     <Card className="w-full max-w-md border-border/60">
       <CardHeader>
         <CardTitle className="text-2xl font-semibold">Welcome back</CardTitle>
-        <CEnter your credentials to access your DataDrip dashboard.
+        <CardDescription>
+          Enter your credentials to access your DataDrip dashboard.
         </CardDescription>
       </CardHeader>
       <Form {...form}>
@@ -126,13 +127,8 @@ export function LoginForm() {
             ) : null}
           </CardContent>
           <CardFooter className="flex flex-col gap-3">
-            <Button
-              type="submit"
-              className="w-full"
-              disabled={status === "sending"}
-            >
-              {status === "sending" ? "Signing in..." : "Sign in"
-                  : "Email me a link"}
+            <Button type="submit" className="w-full" disabled={status === "sending"}>
+              {status === "sending" ? "Signing in..." : "Sign in"}
             </Button>
             <p className="text-center text-xs text-muted-foreground">
               By continuing you agree to our platform terms and confirm you are authorized to access
