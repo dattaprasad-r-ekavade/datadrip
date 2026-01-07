@@ -1,33 +1,26 @@
+import NextAuth from "next-auth";
 import { NextResponse } from "next/server";
 
-import { auth } from "@/auth";
+import { authConfig } from "@/auth.config";
 
-const PROTECTED_PREFIXES = ["/dashboard", "/admin"] as const;
-const PUBLIC_AUTH_ROUTES = ["/login", "/login/verify"] as const;
-
-type ProtectedPrefix = (typeof PROTECTED_PREFIXES)[number];
-
-type PublicAuthRoute = (typeof PUBLIC_AUTH_ROUTES)[number];
-
-const isProtectedRoute = (pathname: string): pathname is ProtectedPrefix =>
-  PROTECTED_PREFIXES.some((prefix) => pathname.startsWith(prefix));
-
-const isPublicAuthRoute = (pathname: string): pathname is PublicAuthRoute =>
-  PUBLIC_AUTH_ROUTES.some((route) => pathname === route);
+const { auth } = NextAuth(authConfig);
 
 export default auth((request) => {
   const { nextUrl } = request;
   const session = request.auth;
   const { pathname } = nextUrl;
 
-  if (!session && isProtectedRoute(pathname)) {
+  const isProtectedRoute = pathname.startsWith("/dashboard") || pathname.startsWith("/admin");
+  const isAuthRoute = pathname === "/login" || pathname === "/login/verify";
+
+  if (!session && isProtectedRoute) {
     const loginUrl = nextUrl.clone();
     loginUrl.pathname = "/login";
     loginUrl.searchParams.set("next", pathname + nextUrl.search);
     return NextResponse.redirect(loginUrl);
   }
 
-  if (session && isPublicAuthRoute(pathname)) {
+  if (session && isAuthRoute) {
     const dashboardUrl = nextUrl.clone();
     dashboardUrl.pathname = "/dashboard";
     dashboardUrl.search = "";

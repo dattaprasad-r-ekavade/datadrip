@@ -28,6 +28,7 @@ import { Input } from "@/components/ui/input";
 
 const loginSchema = z.object({
   email: z.string().min(1, "Email address is required").email("Enter a valid business email"),
+  password: z.string().min(1, "Password is required"),
 });
 
 type LoginSchema = z.infer<typeof loginSchema>;
@@ -35,13 +36,14 @@ type LoginSchema = z.infer<typeof loginSchema>;
 export function LoginForm() {
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("next") ?? "/dashboard";
-  const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
+  const [status, setStatus] = useState<"idle" | "sending" | "error">("idle");
   const [error, setError] = useState<string | null>(null);
 
   const form = useForm<LoginSchema>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
       email: "",
+      password: "",
     },
   });
 
@@ -49,30 +51,30 @@ export function LoginForm() {
     setStatus("sending");
     setError(null);
 
-    const response = await signIn("email", {
-      email: values.email,
-      redirect: false,
-      callbackUrl,
-    });
+    try {
+      const result = await signIn("credentials", {
+        email: values.email,
+        password: values.password,
+        redirect: false,
+      });
 
-    if (response?.ok) {
-      setStatus("sent");
-      form.reset();
-      return;
+      if (result?.error) {
+        setError("Invalid email or password");
+        setStatus("error");
+      } else if (result?.ok) {
+        window.location.href = callbackUrl;
+      }
+    } catch (err) {
+      setError("An error occurred. Please try again.");
+      setStatus("error");
     }
-
-    setStatus("error");
-    setError(
-      response?.error ?? "We were unable to deliver your magic link. Please try again in a moment."
-    );
   }
 
   return (
     <Card className="w-full max-w-md border-border/60">
       <CardHeader>
         <CardTitle className="text-2xl font-semibold">Welcome back</CardTitle>
-        <CardDescription>
-          We will email you a secure magic link so you can access your DataDrip dashboard.
+        <CEnter your credentials to access your DataDrip dashboard.
         </CardDescription>
       </CardHeader>
       <Form {...form}>
@@ -91,17 +93,32 @@ export function LoginForm() {
                       inputMode="email"
                       placeholder="agencylead@yourdomain.com"
                       autoComplete="email"
+                      disabled={status === "sending"}
                     />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            {status === "sent" ? (
-              <p className="rounded-md border border-emerald-200 bg-emerald-50 p-3 text-sm text-emerald-800">
-                Success! Check your inbox for a link to sign in. The link expires in 24 hours.
-              </p>
-            ) : null}
+            <FormField
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Password</FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      type="password"
+                      placeholder="••••••••"
+                      autoComplete="current-password"
+                      disabled={status === "sending"}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             {error ? (
               <p className="rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-700">
                 {error}
@@ -112,12 +129,9 @@ export function LoginForm() {
             <Button
               type="submit"
               className="w-full"
-              disabled={status === "sending" || status === "sent"}
+              disabled={status === "sending"}
             >
-              {status === "sending"
-                ? "Sending magic link..."
-                : status === "sent"
-                  ? "Magic link sent"
+              {status === "sending" ? "Signing in..." : "Sign in"
                   : "Email me a link"}
             </Button>
             <p className="text-center text-xs text-muted-foreground">
