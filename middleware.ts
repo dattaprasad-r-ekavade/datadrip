@@ -10,7 +10,9 @@ export default auth((request) => {
   const session = request.auth;
   const { pathname } = nextUrl;
 
-  const isProtectedRoute = pathname.startsWith("/dashboard") || pathname.startsWith("/admin");
+  const isProtectedRoute = 
+    pathname.startsWith("/dashboard") || 
+    pathname.startsWith("/admin");
   const isAuthRoute = pathname === "/login" || pathname === "/login/verify";
 
   if (!session && isProtectedRoute) {
@@ -38,5 +40,10 @@ export default auth((request) => {
 });
 
 export const config = {
-  matcher: ["/dashboard/:path*", "/admin/:path*", "/login", "/login/verify"],
+  matcher: [
+    "/dashboard/:path*", 
+    "/admin/:path*", 
+    "/login", 
+    "/login/verify"
+  ],
 };
