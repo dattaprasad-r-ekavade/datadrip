@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import Link from "next/link";
 import { Plus, Search, MoreHorizontal, Edit, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -142,6 +143,29 @@ export default function ClientsPage() {
     }
   };
 
+  const handleSyncClient = async (clientId: string) => {
+    try {
+      const response = await fetch(`/api/sync/clients/${clientId}`, {
+        method: "POST",
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to sync client");
+      }
+
+      toast({
+        title: "Sync started",
+        description: "Client data sync completed successfully.",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to sync client data.",
+        variant: "destructive",
+      });
+    }
+  };
+
   const handlePageChange = (page: number) => {
     fetchClients(page, search);
   };
@@ -231,6 +255,19 @@ export default function ClientsPage() {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
+                        <DropdownMenuItem onClick={() => handleSyncClient(client.id)}>
+                          Sync now
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Link href={`/api/integrations/meta/authorize?clientId=${client.id}`}>
+                            {client.metaAccount ? "Reconnect Meta" : "Connect Meta"}
+                          </Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Link href={`/api/integrations/google-ads/authorize?clientId=${client.id}`}>
+                            {client.googleAccount ? "Reconnect Google" : "Connect Google"}
+                          </Link>
+                        </DropdownMenuItem>
                         <DropdownMenuItem>
                           <Edit className="mr-2 h-4 w-4" />
                           Edit
