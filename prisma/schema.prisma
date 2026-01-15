@@ -2,7 +2,8 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
 }
 
 datasource db {
@@ -65,6 +66,7 @@ model User {
   createdAt      DateTime       @default(now())
   updatedAt      DateTime       @updatedAt
   SystemConfig   SystemConfig[]
+  invitations    Invitation[]
 }
 
 model Agency {
@@ -75,6 +77,7 @@ model Agency {
   aiEnabled Boolean  @default(true)
   users     User[]
   clients   Client[]
+  invitations Invitation[]
   settings  Json?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -179,10 +182,13 @@ model AIProvider {
 
 model PricingPlan {
   id           String   @id @default(cuid())
+  tier         PlanTier @unique
   name         String
   description  String?
   priceMonthly Decimal
   priceYearly  Decimal?
+  currency     String   @default("INR")
+  billingInterval String @default("monthly")
   clientLimit  Int?
   userLimit    Int?
   aiCredits    Int?
@@ -200,6 +206,22 @@ model SystemConfig {
   updatedById String?
   updatedBy   User?    @relation(fields: [updatedById], references: [id])
   updatedAt   DateTime @default(now()) @updatedAt
+}
+
+model Invitation {
+  id          String   @id @default(cuid())
+  email       String
+  role        Role     @default(MEMBER)
+  agencyId    String
+  agency      Agency   @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+  token       String   @unique
+  expiresAt   DateTime
+  acceptedAt  DateTime?
+  invitedById String?
+  invitedBy   User?    @relation(fields: [invitedById], references: [id])
+  createdAt   DateTime @default(now())
+
+  @@index([agencyId])
 }
 
 model Account {

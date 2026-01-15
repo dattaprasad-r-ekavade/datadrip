@@ -11,6 +11,7 @@ interface AgencySettingsPageProps {
     id: string;
     name: string;
     timezone: string;
+    aiEnabled: boolean;
   };
 }
 
@@ -19,7 +20,7 @@ export default function AgencySettingsPage({ agency }: AgencySettingsPageProps) 
   const router = useRouter();
   const { toast } = useToast();
 
-  const handleUpdateAgency = async (data: { name: string; timezone: string }) => {
+  const handleUpdateAgency = async (data: { name: string; timezone: string; aiEnabled?: boolean }) => {
     setIsLoading(true);
     try {
       await AgencyService.update(agency.id, data);
@@ -46,12 +47,16 @@ export default function AgencySettingsPage({ agency }: AgencySettingsPageProps) 
         <p className="text-muted-foreground">
           Manage your agency&apos;s configuration and preferences.
         </p>
+        <div className="mt-3 inline-flex items-center rounded-full border border-border/60 px-3 py-1 text-xs">
+          AI insights: {agency.aiEnabled ? "Enabled" : "Disabled"}
+        </div>
       </div>
 
       <AgencyForm
         initialData={{
           name: agency.name,
           timezone: agency.timezone,
+          aiEnabled: agency.aiEnabled,
         }}
         onSubmit={handleUpdateAgency}
         isLoading={isLoading}

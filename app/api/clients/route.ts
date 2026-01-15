@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { ClientService, CreateClientInput } from "@/lib/services/client";
+import { PricingService } from "@/lib/services/pricing";
 
 export async function POST(request: NextRequest) {
   try {
@@ -26,6 +27,25 @@ export async function POST(request: NextRequest) {
     // If not super admin, ensure client is created for user's agency
     if (!user.isSuperAdmin) {
       body.agencyId = user.agencyId!;
+    }
+
+    if (body.agencyId) {
+      const agency = await prisma.agency.findUnique({
+        where: { id: body.agencyId },
+        select: { id: true, plan: true, _count: { select: { clients: true } } },
+      });
+
+      if (!agency) {
+        return NextResponse.json({ error: "Agency not found" }, { status: 404 });
+      }
+
+      const plan = await PricingService.getPlanForAgency(agency);
+      if (plan?.clientLimit && agency._count.clients >= plan.clientLimit) {
+        return NextResponse.json(
+          { error: "Client limit reached for current plan" },
+          { status: 403 }
+        );
+      }
     }
 
     const client = await ClientService.create(body);

@@ -95,7 +95,8 @@ export default function ClientsPage() {
       });
 
       if (!response.ok) {
-        throw new Error("Failed to create client");
+        const payload = await response.json();
+        throw new Error(payload.error ?? "Failed to create client");
       }
 
       toast({
@@ -106,9 +107,12 @@ export default function ClientsPage() {
       setShowCreateForm(false);
       fetchClients(pagination.page, search);
     } catch (error) {
+      const message = (error as Error).message ?? "Failed to create client.";
       toast({
         title: "Error",
-        description: "Failed to create client.",
+        description: message.includes("limit")
+          ? "Client limit reached. Upgrade your plan to add more clients."
+          : message,
         variant: "destructive",
       });
     }
@@ -240,12 +244,12 @@ export default function ClientsPage() {
                       <div className="flex items-center space-x-4 text-sm text-muted-foreground mt-1">
                         <span>{client._count.reports} reports</span>
                         <span>{client._count.insights} insights</span>
-                        {client.metaAccount && (
-                          <span className="text-green-600">Meta connected</span>
-                        )}
-                        {client.googleAccount && (
-                          <span className="text-blue-600">Google connected</span>
-                        )}
+                        <span className={client.googleAccount ? "text-green-600" : "text-muted-foreground"}>
+                          {client.googleAccount ? "Google connected" : "Google"}
+                        </span>
+                        <span className={client.metaAccount ? "text-blue-600" : "text-muted-foreground"}>
+                          {client.metaAccount ? "Meta connected" : "Meta"}
+                        </span>
                       </div>
                     </div>
                     <DropdownMenu>
@@ -255,22 +259,21 @@ export default function ClientsPage() {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
-                        <DropdownMenuItem onClick={() => handleSyncClient(client.id)}>
-                          Sync now
+                        <DropdownMenuItem asChild>
+                          <Link href={`/api/integrations/google-ads/authorize?clientId=${client.id}`}>
+                            {client.googleAccount ? "Reconnect Google Ads" : "Connect Google Ads"}
+                          </Link>
                         </DropdownMenuItem>
                         <DropdownMenuItem asChild>
                           <Link href={`/api/integrations/meta/authorize?clientId=${client.id}`}>
-                            {client.metaAccount ? "Reconnect Meta" : "Connect Meta"}
+                            {client.metaAccount ? "Reconnect Meta Ads" : "Connect Meta Ads"}
                           </Link>
                         </DropdownMenuItem>
-                        <DropdownMenuItem asChild>
-                          <Link href={`/api/integrations/google-ads/authorize?clientId=${client.id}`}>
-                            {client.googleAccount ? "Reconnect Google" : "Connect Google"}
-                          </Link>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem>
-                          <Edit className="mr-2 h-4 w-4" />
-                          Edit
+                        <DropdownMenuItem
+                          onClick={() => handleSyncClient(client.id)}
+                          disabled={!client.googleAccount && !client.metaAccount}
+                        >
+                          Sync data
                         </DropdownMenuItem>
                         <DropdownMenuItem
                           className="text-destructive"

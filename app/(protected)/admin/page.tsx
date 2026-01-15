@@ -1,4 +1,6 @@
+import Link from "next/link";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { requireSuperAdminSession } from "@/lib/auth/session";
 
 export default async function AdminPage() {
@@ -22,6 +24,9 @@ export default async function AdminPage() {
               Configure OpenAI, Anthropic, Google Gemini, or Azure OpenAI credentials and define
               fallback priority.
             </p>
+            <Button asChild size="sm" variant="outline">
+              <Link href="/admin/ai-providers">Manage providers</Link>
+            </Button>
           </div>
           <div className="space-y-2">
             <h3 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
@@ -31,6 +36,9 @@ export default async function AdminPage() {
               Launch new plans, update seat limits, and control AI credit allocation without code
               changes.
             </p>
+            <Button asChild size="sm" variant="outline">
+              <Link href="/admin/pricing">Manage pricing</Link>
+            </Button>
           </div>
           <div className="space-y-2">
             <h3 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
@@ -48,6 +56,20 @@ export default async function AdminPage() {
               Manage global settings such as reporting cadence, webhook endpoints, and audit
               logging.
             </p>
+            <Button asChild size="sm" variant="outline">
+              <Link href="/admin/system-config">Manage config</Link>
+            </Button>
+          </div>
+          <div className="space-y-2">
+            <h3 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
+              Integration status
+            </h3>
+            <p className="text-sm text-muted-foreground">
+              Track token expiry and connection health for Meta and Google Ads.
+            </p>
+            <Button asChild size="sm" variant="outline">
+              <Link href="/admin/integrations">View status</Link>
+            </Button>
           </div>
         </CardContent>
       </Card>

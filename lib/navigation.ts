@@ -1,5 +1,15 @@
 import type { LucideIcon } from "lucide-react";
-import { BarChart3, Bot, Home, Settings, ShieldCheck, Users } from "lucide-react";
+import {
+  BarChart3,
+  Bot,
+  CreditCard,
+  Home,
+  LineChart,
+  Settings,
+  ShieldCheck,
+  Target,
+  Users,
+} from "lucide-react";
 
 export type NavItem = {
   title: string;
@@ -16,9 +26,20 @@ export const mainNavigation: NavItem[] = [
     icon: Home,
   },
   {
+    title: "Analytics",
+    href: "/dashboard/analytics",
+    icon: LineChart,
+  },
+  {
     title: "Clients",
     href: "/dashboard/clients",
     icon: Users,
+  },
+  {
+    title: "Competitors",
+    href: "/dashboard/competitors",
+    icon: Target,
+    badge: "New",
   },
   {
     title: "Reports",
@@ -29,6 +50,16 @@ export const mainNavigation: NavItem[] = [
     title: "AI Insights",
     href: "/dashboard/insights",
     icon: Bot,
+  },
+  {
+    title: "Team",
+    href: "/dashboard/team",
+    icon: Users,
+  },
+  {
+    title: "Billing",
+    href: "/dashboard/billing",
+    icon: CreditCard,
   },
   {
     title: "Settings",
