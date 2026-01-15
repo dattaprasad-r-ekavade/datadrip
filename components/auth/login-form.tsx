@@ -62,9 +62,9 @@ export function LoginForm() {
         setError("Invalid email or password");
         setStatus("error");
       } else if (result?.ok) {
-        window.location.href = callbackUrl;
+        window.location.replace(callbackUrl);
       }
-    } catch (err) {
+    } catch {
       setError("An error occurred. Please try again.");
       setStatus("error");
     }

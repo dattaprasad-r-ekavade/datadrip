@@ -18,6 +18,8 @@ export interface CampaignSummary {
   impressions: number;
   clicks: number;
   conversions: number;
+  roas?: number | null;
+  cpa?: number | null;
 }
 
 const startOfDay = (value: Date) => {

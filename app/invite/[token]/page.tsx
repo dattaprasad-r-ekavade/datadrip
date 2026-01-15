@@ -1,13 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useState, use } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 
-export default function InviteAcceptPage({ params }: { params: { token: string } }) {
+export default function InviteAcceptPage({ params }: { params: Promise<{ token: string }> }) {
+  const { token } = use(params);
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -21,7 +22,7 @@ export default function InviteAcceptPage({ params }: { params: { token: string }
       const response = await fetch("/api/invitations/accept", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ token: params.token, name, password }),
+        body: JSON.stringify({ token, name, password }),
       });
 
       if (!response.ok) {

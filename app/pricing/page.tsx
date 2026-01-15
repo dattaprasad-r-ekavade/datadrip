@@ -1,5 +1,8 @@
 import { PricingService } from "@/lib/services/pricing";
 
+// Force dynamic rendering - this page queries the database
+export const dynamic = 'force-dynamic';
+
 const formatCurrency = (value: number, currency: string) =>
   new Intl.NumberFormat("en-IN", { style: "currency", currency }).format(value);
 

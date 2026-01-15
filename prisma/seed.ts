@@ -224,6 +224,7 @@ async function main() {
     OPTIMIZATION_OPPORTUNITY: "Top ad set has 45% higher ROAS. Increase budget allocation.",
     BUDGET_ALERT: "Current pace will exhaust budget 3 days early. Adjust daily caps.",
     AUDIENCE_RECOMMENDATION: "Lookalike audience could expand reach by 180%.",
+    CREATIVE_IDEA: "Test new video format based on high-performing competitor content.",
   };
 
   for (let i = 0; i < clients.length; i++) {

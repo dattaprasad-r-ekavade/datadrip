@@ -1,6 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import { PrismaLibSQL } from "@prisma/adapter-libsql";
-import { createClient } from "@libsql/client";
+import { PrismaLibSql } from "@prisma/adapter-libsql";
 import { decryptString, encryptString, isEncrypted } from "@/lib/security/encryption";
 
 type GlobalPrisma = typeof globalThis & {
@@ -12,11 +11,10 @@ const globalForPrisma = globalThis as GlobalPrisma;
 function createPrismaClient() {
   // Use Turso in production (when TURSO_DATABASE_URL is set)
   if (process.env.TURSO_DATABASE_URL) {
-    const libsql = createClient({
+    const adapter = new PrismaLibSql({
       url: process.env.TURSO_DATABASE_URL,
       authToken: process.env.TURSO_AUTH_TOKEN,
     });
-    const adapter = new PrismaLibSQL(libsql);
     return new PrismaClient({ adapter });
   }
 
@@ -104,6 +102,7 @@ export const prisma = prismaClient.$extends({
   query: {
     $allModels: {
       async $allOperations({ model, operation, args, query }) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const argsAny = args as Record<string, any> | undefined;
         if (operation === "create" || operation === "update" || operation === "upsert") {
           encryptData(model, argsAny?.data);
