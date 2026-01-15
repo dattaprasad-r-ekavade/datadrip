@@ -2,6 +2,11 @@ import { requireSuperAdminSession } from "@/lib/auth/session";
 import { prisma } from "@/lib/prisma";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { CheckCircle, AlertCircle } from "lucide-react";
+import type { GoogleAccount, Client } from "@prisma/client";
+
+type GoogleAccountWithClient = GoogleAccount & {
+  client: Pick<Client, 'name'>;
+};
 
 export default async function IntegrationsStatusPage() {
   await requireSuperAdminSession();
@@ -9,7 +14,7 @@ export default async function IntegrationsStatusPage() {
   const googleAccounts = await prisma.googleAccount.findMany({
     include: { client: { select: { name: true } } },
     orderBy: { updatedAt: "desc" },
-  });
+  }) as GoogleAccountWithClient[];
 
   const now = new Date();
 
