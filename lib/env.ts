@@ -1,7 +1,8 @@
 import { z } from "zod";
 
 const envSchema = z.object({
-  DATABASE_URL: z.string().min(1, "DATABASE_URL is required"),
+  // DATABASE_URL is optional when using Turso (TURSO_DATABASE_URL)
+  DATABASE_URL: z.string().optional(),
   NEXTAUTH_SECRET: z.string().min(1, "NEXTAUTH_SECRET is required"),
   NEXTAUTH_URL: z.string().url().optional(),
   TOKEN_ENCRYPTION_KEY: z.string().min(1, "TOKEN_ENCRYPTION_KEY is required"),
@@ -19,7 +20,7 @@ const envSchema = z.object({
 });
 
 const parsed = envSchema.safeParse({
-  DATABASE_URL: process.env.DATABASE_URL,
+  DATABASE_URL: process.env.DATABASE_URL ?? process.env.TURSO_DATABASE_URL,
   NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
   NEXTAUTH_URL: process.env.NEXTAUTH_URL ?? "http://localhost:3000",
   TOKEN_ENCRYPTION_KEY: process.env.TOKEN_ENCRYPTION_KEY,
