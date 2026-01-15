@@ -70,6 +70,11 @@ export function LoginForm() {
     }
   }
 
+  const fillDemoCredentials = (email: string, password: string) => {
+    form.setValue("email", email);
+    form.setValue("password", password);
+  };
+
   return (
     <Card className="w-full max-w-md border-border/60">
       <CardHeader>
@@ -81,6 +86,39 @@ export function LoginForm() {
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           <CardContent className="space-y-6">
+            {/* Demo Credentials */}
+            <div className="rounded-lg border border-border/60 bg-muted/30 p-4">
+              <p className="mb-3 text-xs font-medium text-muted-foreground">Demo Credentials</p>
+              <div className="flex flex-col gap-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  className="justify-start text-left"
+                  onClick={() => fillDemoCredentials("demo@datadrip.io", "demo123")}
+                  disabled={status === "sending"}
+                >
+                  <span className="flex w-full items-center justify-between">
+                    <span className="font-medium">Agency Admin</span>
+                    <span className="text-xs text-muted-foreground">demo@datadrip.io</span>
+                  </span>
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  className="justify-start text-left"
+                  onClick={() => fillDemoCredentials("admin@datadrip.io", "demo123")}
+                  disabled={status === "sending"}
+                >
+                  <span className="flex w-full items-center justify-between">
+                    <span className="font-medium">Super Admin</span>
+                    <span className="text-xs text-muted-foreground">admin@datadrip.io</span>
+                  </span>
+                </Button>
+              </div>
+            </div>
+
             <FormField
               control={form.control}
               name="email"
