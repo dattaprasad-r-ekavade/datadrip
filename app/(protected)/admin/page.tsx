@@ -2,9 +2,11 @@ import Link from "next/link";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { requireSuperAdminSession } from "@/lib/auth/session";
+import { AgencyService } from "@/lib/services/agency";
 
 export default async function AdminPage() {
   await requireSuperAdminSession();
+  const agencies = await AgencyService.getAll();
 
   return (
     <div className="flex flex-col gap-6">
@@ -71,6 +73,39 @@ export default async function AdminPage() {
               <Link href="/admin/integrations">View status</Link>
             </Button>
           </div>
+        </CardContent>
+      </Card>
+
+      <Card className="border-border/60">
+        <CardHeader>
+          <CardTitle>Agencies</CardTitle>
+          <CardDescription>
+            Total agencies: {agencies.length}
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          {agencies.length === 0 ? (
+            <p className="text-sm text-muted-foreground">No agencies found.</p>
+          ) : (
+            <div className="space-y-3">
+              {agencies.map((agency) => (
+                <div
+                  key={agency.id}
+                  className="flex items-center justify-between rounded-md border border-border/60 p-3"
+                >
+                  <div>
+                    <p className="text-sm font-semibold">{agency.name}</p>
+                    <p className="text-xs text-muted-foreground">
+                      Plan: {agency.plan} · Users: {agency._count.users} · Clients: {agency._count.clients}
+                    </p>
+                  </div>
+                  <Link href={`/admin/system-config`} className="text-xs text-primary underline">
+                    Manage
+                  </Link>
+                </div>
+              ))}
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>

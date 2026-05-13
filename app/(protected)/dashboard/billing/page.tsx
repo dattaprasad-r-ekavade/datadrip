@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
+import { useSession } from "next-auth/react";
 import { Check, CreditCard, Download, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -67,6 +69,8 @@ const invoices = [
 ];
 
 export default function BillingPage() {
+  const { data: session } = useSession();
+  const isSuperAdmin = Boolean(session?.user?.isSuperAdmin);
   const [currentPlan] = useState("growth");
   const [isProcessing, setIsProcessing] = useState(false);
   const [showCheckout, setShowCheckout] = useState(false);
@@ -98,6 +102,21 @@ export default function BillingPage() {
 
   return (
     <div className="container mx-auto py-8">
+      {isSuperAdmin && (
+        <Card className="mb-6 border-blue-300 bg-blue-50">
+          <CardHeader>
+            <CardTitle>Platform Admin View</CardTitle>
+            <CardDescription>
+              Super admins are not tied to an agency subscription. Use admin pricing controls for platform plans.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Button asChild variant="outline">
+              <Link href="/admin/pricing">Go to Pricing Admin</Link>
+            </Button>
+          </CardContent>
+        </Card>
+      )}
       <div className="mb-8">
         <h1 className="text-3xl font-bold">Billing & Subscription</h1>
         <p className="text-muted-foreground">
