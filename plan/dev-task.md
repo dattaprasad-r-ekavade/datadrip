@@ -1,8 +1,8 @@
-# DataDrip MVP Development Task Plan
+# SuperAdverts MVP Development Task Plan
 
 ## Overview
 
-This document outlines the step-by-step development tasks to build the DataDrip MVP - a marketing analytics platform for agencies managing Meta and Google Ads campaigns.
+This document outlines the step-by-step development tasks to build the SuperAdverts MVP - a marketing analytics platform for agencies managing Meta and Google Ads campaigns.
 
 **Target Timeline**: 16 weeks (updated to include admin features)  
 **Goal**: Launch-ready MVP with authentication, integrations, automated reporting, multi-provider AI insights, and comprehensive admin controls
@@ -631,7 +631,7 @@ This document outlines the step-by-step development tasks to build the DataDrip 
 
 - **Technical Plan**: `plan/technical-plan.md`
 - **Product Idea**: `idea.md`
-- **Repository**: GitHub - datadrip
+- **Repository**: GitHub - superadverts
 - **Design System**: shadcn/ui documentation
 - **API Docs**: Meta Marketing API, Google Ads API
 

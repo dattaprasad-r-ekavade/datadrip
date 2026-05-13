@@ -7,7 +7,7 @@ async function main() {
   console.log("Seeding database...");
 
   // Create demo pricing plans
-  const starterPlan = await prisma.pricingPlan.upsert({
+  await prisma.pricingPlan.upsert({
     where: { tier: PlanTier.STARTER },
     update: {},
     create: {
@@ -30,7 +30,7 @@ async function main() {
     },
   });
 
-  const growthPlan = await prisma.pricingPlan.upsert({
+  await prisma.pricingPlan.upsert({
     where: { tier: PlanTier.GROWTH },
     update: {},
     create: {
@@ -99,11 +99,11 @@ async function main() {
   // Create demo admin user
   const hashedPassword = await bcrypt.hash("demo123", 10);
 
-  const adminUser = await prisma.user.upsert({
-    where: { email: "demo@datadrip.io" },
+  await prisma.user.upsert({
+    where: { email: "demo@superadverts.io" },
     update: {},
     create: {
-      email: "demo@datadrip.io",
+      email: "demo@superadverts.io",
       name: "Demo Admin",
       hashedPassword: hashedPassword,
       role: Role.ADMIN,
@@ -113,10 +113,10 @@ async function main() {
 
   // Create super admin for admin panel access
   await prisma.user.upsert({
-    where: { email: "admin@datadrip.io" },
+    where: { email: "admin@superadverts.io" },
     update: {},
     create: {
-      email: "admin@datadrip.io",
+      email: "admin@superadverts.io",
       name: "Super Admin",
       hashedPassword: hashedPassword,
       role: Role.ADMIN,
@@ -240,7 +240,7 @@ async function main() {
           },
           impactScore: 65 + Math.floor(Math.random() * 25),
           status: InsightStatus.PENDING,
-          aiProvider: "DataDrip AI",
+          aiProvider: "SuperAdverts AI",
           aiModel: "mock-v1",
         },
       });
@@ -275,8 +275,8 @@ async function main() {
   console.log("Demo data seeded successfully!");
   console.log("========================================\n");
   console.log("Demo Accounts:");
-  console.log("  Agency Admin: demo@datadrip.io / demo123");
-  console.log("  Super Admin:  admin@datadrip.io / demo123");
+  console.log("  Agency Admin: demo@superadverts.io / demo123");
+  console.log("  Super Admin:  admin@superadverts.io / demo123");
   console.log("\nDemo Clients:");
   clients.forEach((c) => console.log(`  - ${c.name}`));
   console.log("\n");

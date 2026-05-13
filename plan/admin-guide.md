@@ -1,7 +1,7 @@
 # Admin Features Quick Reference
 
 ## Overview
-This guide provides a quick reference for all admin-specific features in the DataDrip platform.
+This guide provides a quick reference for all admin-specific features in the SuperAdverts platform.
 
 ---
 
@@ -572,5 +572,5 @@ curl -X POST https://yourapp.com/api/admin/ai-providers/test \
 ---
 
 **Last Updated**: October 26, 2025
-**For**: DataDrip MVP v1.0
+**For**: SuperAdverts MVP v1.0
 **Target Audience**: Super Admins, System Operators

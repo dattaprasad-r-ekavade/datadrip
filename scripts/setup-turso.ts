@@ -33,8 +33,9 @@ async function runMigrations(prisma: PrismaClient) {
   try {
     await prisma.$executeRawUnsafe(cleanedMigration1);
     console.log("  ✓ 0001_init complete");
-  } catch (err: any) {
-    console.error("  ✗ Error running migration:", err.message);
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    console.error("  ✗ Error running migration:", message);
   }
 
   // Read and execute second migration
@@ -56,8 +57,9 @@ async function runMigrations(prisma: PrismaClient) {
   try {
     await prisma.$executeRawUnsafe(cleanedMigration2);
     console.log("  ✓ 20260108162310_add_invitations_and_pricing_tier complete\n");
-  } catch (err: any) {
-    console.log(`    Note: ${err.message}\n`);
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    console.log(`    Note: ${message}\n`);
   }
 }
 
@@ -96,7 +98,7 @@ async function main() {
         console.log("   To reseed, manually truncate tables first.");
         return;
       }
-    } catch (err) {
+    } catch {
       console.log("ℹ️  Tables don't exist yet or are empty. Will create seed data.");
     }
 
@@ -117,7 +119,7 @@ async function main() {
 
     const superAdmin = await prisma.user.create({
       data: {
-        email: "admin@datadrip.io",
+        email: "admin@superadverts.io",
         name: "Super Admin",
         hashedPassword: hashedPassword,
         role: "SUPER_ADMIN",
@@ -128,7 +130,7 @@ async function main() {
 
     const agencyAdmin = await prisma.user.create({
       data: {
-        email: "demo@datadrip.io",
+        email: "demo@superadverts.io",
         name: "Demo Agency Admin",
         hashedPassword: hashedPassword,
         role: "ADMIN",
@@ -143,8 +145,6 @@ async function main() {
       data: {
         name: "Fashion Boutique Co.",
         agencyId: demoAgency.id,
-        industry: "Retail",
-        website: "https://fashionboutique.example.com",
       },
     });
     console.log(`  ✓ Created client: ${client1.name}`);
@@ -153,16 +153,14 @@ async function main() {
       data: {
         name: "TechStart Inc.",
         agencyId: demoAgency.id,
-        industry: "Technology",
-        website: "https://techstart.example.com",
       },
     });
     console.log(`  ✓ Created client: ${client2.name}`);
 
     console.log("\n✅ Turso database setup complete!\n");
     console.log("Login credentials:");
-    console.log("  Agency Admin: demo@datadrip.io / demo123");
-    console.log("  Super Admin:  admin@datadrip.io / demo123");
+    console.log("  Agency Admin: demo@superadverts.io / demo123");
+    console.log("  Super Admin:  admin@superadverts.io / demo123");
   } catch (error) {
     console.error("\n❌ Error setting up Turso:", error);
     throw error;

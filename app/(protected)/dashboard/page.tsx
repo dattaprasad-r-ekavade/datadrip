@@ -4,7 +4,6 @@ import {
   Bot,
   DollarSign,
   Eye,
-  LineChart,
   MousePointer,
   ShoppingCart,
   TrendingUp,
@@ -99,7 +98,7 @@ export default async function DashboardPage() {
         <div>
           <h1 className="text-2xl font-bold">Welcome back, {session.user.name || "there"}!</h1>
           <p className="text-muted-foreground">
-            Here's what's happening with your campaigns today.
+            Here&apos;s what&apos;s happening with your campaigns today.
           </p>
         </div>
         <Button asChild>

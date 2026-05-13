@@ -1,4 +1,4 @@
-# DataDrip MVP Technical Plan
+# SuperAdverts MVP Technical Plan
 
 ## 1. Architecture Overview
 - **Frontend**: Next.js 13 (App Router) deployed on Vercel with static + SSR/ISR pages, Tailwind CSS, shadcn/ui components for consistent design system.

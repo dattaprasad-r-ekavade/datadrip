@@ -6,12 +6,10 @@ import {
   Check,
   ChevronRight,
   Globe,
-  LineChart,
   Play,
   Shield,
   Sparkles,
   Target,
-  TrendingUp,
   Users,
   Zap,
 } from "lucide-react";
@@ -35,9 +33,9 @@ const features = [
   },
   {
     icon: Bot,
-    title: "AI-Powered Insights",
+    title: "Multi-Model AI Insights",
     description:
-      "Get intelligent recommendations powered by GPT-4 and Claude. Spot opportunities before your competitors.",
+      "Run insights with the latest OpenAI, Anthropic, Gemini, or Azure models. Choose quality, speed, or cost per workflow.",
   },
   {
     icon: BarChart3,
@@ -47,9 +45,9 @@ const features = [
   },
   {
     icon: Target,
-    title: "Budget Optimization",
+    title: "Agentic Budget Optimization",
     description:
-      "AI analyzes spending patterns and suggests optimal budget allocation across campaigns.",
+      "AI agents analyze pacing, CAC, and ROAS trends, then propose budget shifts with confidence scores and rationale.",
   },
   {
     icon: Users,
@@ -59,16 +57,16 @@ const features = [
   },
   {
     icon: Shield,
-    title: "Enterprise Security",
+    title: "Enterprise Security & Governance",
     description:
-      "Bank-grade encryption, SOC 2 compliance, and OAuth 2.0. Your data is always protected.",
+      "Encryption at rest and in transit, role-based permissions, OAuth 2.0, and full audit logs for every critical action.",
   },
 ];
 
 const testimonials = [
   {
     quote:
-      "DataDrip cut our reporting time by 80%. What used to take 2 days now takes 30 minutes.",
+      "SuperAdverts cut our reporting time by 80%. What used to take 2 days now takes 30 minutes.",
     author: "Priya Sharma",
     role: "Founder, DigitalFirst Agency",
     avatar: "PS",
@@ -160,7 +158,7 @@ export default function LandingPage() {
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
               <Zap className="h-5 w-5 text-primary-foreground" />
             </div>
-            <span className="text-xl font-bold">DataDrip</span>
+            <span className="text-xl font-bold">SuperAdverts</span>
           </Link>
           <div className="hidden items-center gap-8 md:flex">
             <Link href="#features" className="text-sm text-muted-foreground hover:text-foreground">
@@ -194,7 +192,7 @@ export default function LandingPage() {
           <div className="container mx-auto px-4 text-center">
             <div className="mx-auto mb-6 inline-flex items-center gap-2 rounded-full border bg-muted/50 px-4 py-1.5 text-sm">
               <Sparkles className="h-4 w-4 text-primary" />
-              <span>Now with GPT-4 & Claude AI</span>
+              <span>Now with Multi-Model AI Routing</span>
               <ChevronRight className="h-4 w-4" />
             </div>
 
@@ -206,8 +204,8 @@ export default function LandingPage() {
             </h1>
 
             <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground md:text-xl">
-              DataDrip unifies your Google Ads and Meta campaigns with AI-powered insights.
-              Spend less time on reports, more time scaling your clients.
+              SuperAdverts unifies Google Ads and Meta data with AI copilots, automated reporting,
+              and approval-ready recommendations your team can act on faster.
             </p>
 
             <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
@@ -271,7 +269,7 @@ export default function LandingPage() {
                 Everything You Need to Scale Your Agency
               </h2>
               <p className="mt-4 text-lg text-muted-foreground">
-                One platform to manage all your clients' ad accounts, generate insights, and deliver results.
+                One platform to manage all your clients&apos; ad accounts, generate insights, and deliver results.
               </p>
             </div>
 
@@ -321,7 +319,7 @@ export default function LandingPage() {
                   step: "03",
                   title: "Get AI Insights",
                   description:
-                    "Our AI analyzes your data and delivers actionable recommendations instantly.",
+                    "Generate prioritized recommendations, review them with your team, and push approved actions with full traceability.",
                 },
               ].map((item) => (
                 <div key={item.step} className="relative">
@@ -369,7 +367,7 @@ export default function LandingPage() {
             <div className="mx-auto max-w-2xl text-center">
               <h2 className="text-3xl font-bold md:text-4xl">Loved by Agencies Across India</h2>
               <p className="mt-4 text-lg text-muted-foreground">
-                See why 500+ agencies trust DataDrip for their marketing intelligence.
+                See why 500+ agencies trust SuperAdverts for their marketing intelligence.
               </p>
             </div>
 
@@ -475,7 +473,7 @@ export default function LandingPage() {
               Ready to 10x Your Agency&apos;s Efficiency?
             </h2>
             <p className="mx-auto mt-4 max-w-2xl text-lg text-primary-foreground/80">
-              Join 500+ agencies already using DataDrip to manage ₹50Cr+ in ad spend. Start your free trial today.
+              Join 500+ agencies already using SuperAdverts to manage ₹50Cr+ in ad spend. Start your free trial today.
             </p>
             <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
               <Button size="lg" variant="secondary" asChild className="h-12 px-8">
@@ -506,7 +504,7 @@ export default function LandingPage() {
                 <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
                   <Zap className="h-5 w-5 text-primary-foreground" />
                 </div>
-                <span className="text-xl font-bold">DataDrip</span>
+                <span className="text-xl font-bold">SuperAdverts</span>
               </Link>
               <p className="mt-4 text-sm text-muted-foreground">
                 Marketing intelligence platform for digital agencies. Made with love in India.
@@ -541,7 +539,7 @@ export default function LandingPage() {
           </div>
           <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t pt-8 md:flex-row">
             <p className="text-sm text-muted-foreground">
-              © 2026 DataDrip. All rights reserved.
+              © 2026 SuperAdverts. All rights reserved.
             </p>
             <div className="flex gap-4">
               <Link href="#" className="text-muted-foreground hover:text-foreground">

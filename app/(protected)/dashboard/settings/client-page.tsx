@@ -29,7 +29,7 @@ export default function AgencySettingsPage({ agency }: AgencySettingsPageProps) 
         description: "Agency settings updated successfully.",
       });
       router.refresh();
-    } catch (_error) {
+    } catch {
       toast({
         title: "Error",
         description: "Failed to update agency settings.",

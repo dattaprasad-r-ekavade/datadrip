@@ -1,4 +1,4 @@
-# DataDrip MVP Sprint Plan
+# SuperAdverts MVP Sprint Plan
 ## Google Ads Only - Demo Ready
 
 **Goal:** Build a working MVP to demo to businesses and investors
@@ -71,7 +71,7 @@
 #### 1.1 Google Cloud Setup
 ```
 1. Go to https://console.cloud.google.com
-2. Create new project "DataDrip"
+2. Create new project "SuperAdverts"
 3. Enable Google Ads API
 4. Create OAuth 2.0 credentials (Web application)
 5. Add authorized redirect URI: http://localhost:3000/api/integrations/google-ads/callback
@@ -134,7 +134,7 @@ Create realistic demo data:
 
 #### Demo Script
 ```
-1. Login as demo@datadrip.io
+1. Login as demo@superadverts.io
 2. Show dashboard with real metrics
 3. Navigate to Clients → Show 3 clients
 4. Click client → Show connected Google Ads

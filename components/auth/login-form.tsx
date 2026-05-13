@@ -80,7 +80,7 @@ export function LoginForm() {
       <CardHeader>
         <CardTitle className="text-2xl font-semibold">Welcome back</CardTitle>
         <CardDescription>
-          Enter your credentials to access your DataDrip dashboard.
+          Enter your credentials to access your SuperAdverts dashboard.
         </CardDescription>
       </CardHeader>
       <Form {...form}>
@@ -95,12 +95,12 @@ export function LoginForm() {
                   variant="outline"
                   size="sm"
                   className="justify-start text-left"
-                  onClick={() => fillDemoCredentials("demo@datadrip.io", "demo123")}
+                  onClick={() => fillDemoCredentials("demo@superadverts.io", "demo123")}
                   disabled={status === "sending"}
                 >
                   <span className="flex w-full items-center justify-between">
                     <span className="font-medium">Agency Admin</span>
-                    <span className="text-xs text-muted-foreground">demo@datadrip.io</span>
+                    <span className="text-xs text-muted-foreground">demo@superadverts.io</span>
                   </span>
                 </Button>
                 <Button
@@ -108,12 +108,12 @@ export function LoginForm() {
                   variant="outline"
                   size="sm"
                   className="justify-start text-left"
-                  onClick={() => fillDemoCredentials("admin@datadrip.io", "demo123")}
+                  onClick={() => fillDemoCredentials("admin@superadverts.io", "demo123")}
                   disabled={status === "sending"}
                 >
                   <span className="flex w-full items-center justify-between">
                     <span className="font-medium">Super Admin</span>
-                    <span className="text-xs text-muted-foreground">admin@datadrip.io</span>
+                    <span className="text-xs text-muted-foreground">admin@superadverts.io</span>
                   </span>
                 </Button>
               </div>

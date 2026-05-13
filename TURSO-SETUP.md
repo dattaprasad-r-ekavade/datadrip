@@ -19,8 +19,8 @@ turso auth login
 3. Apply migrations:
 ```bash
 # Set database URL
-turso db shell datadrip-justforfreecopilot < prisma/migrations/0001_init/migration.sql
-turso db shell datadrip-justforfreecopilot < prisma/migrations/20260108162310_add_invitations_and_pricing_tier/migration.sql
+turso db shell superadverts-justforfreecopilot < prisma/migrations/0001_init/migration.sql
+turso db shell superadverts-justforfreecopilot < prisma/migrations/20260108162310_add_invitations_and_pricing_tier/migration.sql
 ```
 
 4. Seed the database:
@@ -31,7 +31,7 @@ npx tsx scripts/setup-turso.ts
 ## Option 2: Manual SQL Execution
 
 1. Go to [Turso Dashboard](https://turso.tech/app)
-2. Select your database: `datadrip-justforfreecopilot`
+2. Select your database: `superadverts-justforfreecopilot`
 3. Open the SQL editor
 4. Copy and paste the contents of `prisma/migrations/0001_init/migration.sql`
 5. Execute
@@ -45,8 +45,8 @@ npx tsx scripts/setup-turso.ts
 ## Demo Credentials
 
 After seeding, you can login with:
-- **Agency Admin**: `demo@datadrip.io` / `demo123`
-- **Super Admin**: `admin@datadrip.io` / `demo123`
+- **Agency Admin**: `demo@superadverts.io` / `demo123`
+- **Super Admin**: `admin@superadverts.io` / `demo123`
 
 ## Troubleshooting
 

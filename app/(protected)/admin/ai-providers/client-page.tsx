@@ -74,7 +74,7 @@ export default function AIProvidersPage() {
       });
 
       await loadProviders();
-    } catch (error) {
+    } catch {
       toast({
         title: "Error",
         description: "Failed to save provider.",
@@ -95,7 +95,7 @@ export default function AIProvidersPage() {
         title: "Connection ok",
         description: "Provider connection verified.",
       });
-    } catch (error) {
+    } catch {
       toast({
         title: "Error",
         description: "Provider test failed.",
@@ -116,7 +116,7 @@ export default function AIProvidersPage() {
         throw new Error("Delete failed");
       }
       await loadProviders();
-    } catch (error) {
+    } catch {
       toast({
         title: "Error",
         description: "Failed to delete provider.",

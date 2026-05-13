@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
-import { Plus, Search, MoreHorizontal, Edit, Trash2 } from "lucide-react";
+import { Plus, Search, MoreHorizontal,  Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -69,7 +69,7 @@ export default function ClientsPage() {
       const data: ClientsResponse = await response.json();
       setClients(data.clients);
       setPagination(data.pagination);
-    } catch (error) {
+    } catch {
       toast({
         title: "Error",
         description: "Failed to load clients.",
@@ -138,7 +138,7 @@ export default function ClientsPage() {
       });
 
       fetchClients(pagination.page, search);
-    } catch (error) {
+    } catch {
       toast({
         title: "Error",
         description: "Failed to delete client.",
@@ -161,7 +161,7 @@ export default function ClientsPage() {
         title: "Sync started",
         description: "Client data sync completed successfully.",
       });
-    } catch (error) {
+    } catch {
       toast({
         title: "Error",
         description: "Failed to sync client data.",
@@ -180,7 +180,7 @@ export default function ClientsPage() {
         <div>
           <h1 className="text-3xl font-bold">Clients</h1>
           <p className="text-muted-foreground">
-            Manage your agency's clients and their ad accounts.
+            Manage your agency&apos;s clients and their ad accounts.
           </p>
         </div>
         <Button onClick={() => setShowCreateForm(true)}>

@@ -1,4 +1,4 @@
-# DataDrip Setup Guide
+# SuperAdverts Setup Guide
 ## Google Ads + AI Provider Configuration
 
 Follow these steps to get your MVP running with real Google Ads data.
@@ -11,7 +11,7 @@ Follow these steps to get your MVP running with real Google Ads data.
 
 1. Go to [Google Cloud Console](https://console.cloud.google.com)
 2. Click the project dropdown at the top → **New Project**
-3. Name: `DataDrip` (or any name)
+3. Name: `SuperAdverts` (or any name)
 4. Click **Create**
 5. Wait for project creation, then select it
 
@@ -27,14 +27,14 @@ Follow these steps to get your MVP running with real Google Ads data.
 2. Click **+ Create Credentials** → **OAuth client ID**
 3. If prompted, configure OAuth consent screen first:
    - User Type: **External**
-   - App name: `DataDrip`
+   - App name: `SuperAdverts`
    - User support email: your email
    - Developer contact: your email
    - Click **Save and Continue** through all steps
    - Add test users: your Gmail address
 4. Back to Credentials → **+ Create Credentials** → **OAuth client ID**
 5. Application type: **Web application**
-6. Name: `DataDrip Web Client`
+6. Name: `SuperAdverts Web Client`
 7. Authorized redirect URIs: Add these:
    ```
    http://localhost:3000/api/integrations/google-ads/callback
@@ -104,7 +104,7 @@ Follow these steps to get your MVP running with real Google Ads data.
 
 ## Step 4: Update Your .env.local
 
-Open `D:\datadrip\.env.local` and update with your values:
+Open `D:\superadverts\.env.local` and update with your values:
 
 ```env
 # Database (keep as is for local dev)
@@ -157,7 +157,7 @@ After setup, you'll configure AI provider through the app:
 ### 6.1 Start the App
 
 ```bash
-cd D:\datadrip
+cd D:\superadverts
 npm run dev
 ```
 
