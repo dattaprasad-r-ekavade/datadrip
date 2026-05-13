@@ -1,9 +1,12 @@
 # SuperAdverts MVP Sprint Plan
-## Google Ads Only - Demo Ready
+## Production Build + Functional Validation
 
-**Goal:** Build a working MVP to demo to businesses and investors
-**Timeline:** 5-7 days of focused work
-**Focus:** Google Ads integration only (Meta deferred)
+**Goal:** Ship a production-ready MVP with validated core workflows  
+**Scope:** Google Ads + Meta Ads integrations  
+**Auth:** Credentials only (no magic link)  
+**Production DB:** Turso (already configured)  
+**Infra Hardening:** Completed (out of scope for this sprint)  
+**Deferred:** Auth/tenant hardening until live-user phase
 
 ---
 
@@ -11,229 +14,117 @@
 
 | Component | Status | Action Needed |
 |-----------|--------|---------------|
-| Authentication | ✅ Working | None |
-| Client Management | ✅ Working | None (Google-only now) |
-| Google Ads OAuth | ✅ Complete | Test with real credentials |
-| Google Ads Sync | ✅ Complete | Test & debug |
-| Dashboard | ✅ Updated | Google-only view done |
-| Reports | ✅ Working | Test generation |
-| AI Insights | ✅ Mock Ready | Works without AI provider |
-| Admin Panel | ✅ Working | Google-only integrations view |
-| Payment | ❌ Missing | Skip for demo |
-| Demo Data | ✅ Ready | Run `npm run db:seed` |
+| Credentials Authentication | ✅ Working | Validate end-to-end flows |
+| Client Management | ✅ Working | Validate limits + edge cases |
+| Google Ads OAuth | ✅ Implemented | Full functional validation |
+| Meta OAuth | ✅ Implemented | Full functional validation |
+| Sync Engine | ✅ Implemented | Idempotency + retry validation |
+| Dashboard | ✅ Implemented | Data accuracy checks |
+| Reports | ✅ Implemented | Manual + scheduled flow testing |
+| AI Insights | ✅ Implemented | Provider fallback + lifecycle tests |
+| Admin Panel | ✅ Implemented | Pricing + config validation |
+| Infra / Turso | ✅ Done | No action in this sprint |
 
 ---
 
-## MVP Sprint Tasks
+## Execution Phases
 
-### Phase 1: Foundation (Day 1) - IN PROGRESS
-> Get the app running with real Google Ads data
+### Phase 0: Baseline and Spec Alignment (Day 1) - IN PROGRESS
+> Align docs and acceptance criteria with actual production scope
 
-- [ ] **1.1** Set up Google Cloud project & OAuth credentials
-- [ ] **1.2** Apply for Google Ads API developer token (basic access)
-- [ ] **1.3** Configure environment variables
-- [ ] **1.4** Test Google OAuth flow end-to-end
-- [ ] **1.5** Fix any OAuth callback issues
+- [x] **0.1** Create production execution plan doc
+- [x] **0.2** Align README and plan docs with credentials-only auth
+- [x] **0.3** Remove old Google-only instructions in active planning docs
+- [ ] **0.4** Finalize module acceptance checklist
 
-### Phase 2: Core Fixes (Day 2-3) - COMPLETED
-> Make Google Ads the primary/only integration
+### Phase 1: Auth and User Bootstrap (Day 1-2) - PENDING
+> Validate credentials auth and role-based access
 
-- [x] **2.1** Hide/disable Meta integration in UI
-- [x] **2.2** Update dashboard to show Google Ads data only
-- [x] **2.3** Fix client creation flow (Google-only)
-- [x] **2.4** Update admin integrations page (Google-only)
-- [x] **2.5** Create mock AI insights (works without AI provider)
+- [x] **1.1** Validate login success/failure paths *(code-path verified; runtime browser check pending)*
+- [ ] **1.2** Validate logout/session handling *(runtime pending)*
+- [x] **1.3** Validate protected route behavior by role *(middleware/session logic verified; runtime browser check pending)*
+- [x] **1.4** Validate seed/bootstrap test accounts *(demo credentials and seed paths verified in code)*
 
-### Phase 3: Demo Polish (Day 3-4) - COMPLETED
-> Make it look good for demos
+### Phase 2: Client, Team, Invitations (Day 2-3) - IN PROGRESS
+> Validate agency operations workflows
 
-- [x] **3.1** Create demo seed data script (`npm run db:seed`)
-- [x] **3.2** Update insights page for demo mode
-- [ ] **3.3** Fix any UI bugs/glitches (testing needed)
-- [ ] **3.4** Test report generation with demo data
-- [ ] **3.5** Test AI insight generation (mock mode)
+- [x] **2.1** Validate client CRUD *(API auth + agency guard paths verified in code)*
+- [x] **2.2** Validate plan-limit enforcement (client/user caps) *(enforced in clients and invitations API paths)*
+- [x] **2.3** Validate team invitation create/accept flow *(service + API paths verified in code)*
+- [x] **2.4** Validate agency settings updates *(added `/api/agency/me` PATCH with role guard + payload validation)*
 
-### Phase 4: Demo Flow (Day 5) - PENDING
-> Prepare the demo experience
+### Phase 3: Google + Meta Integrations (Day 3-5) - IN PROGRESS
+> Validate connector reliability for both platforms
 
-- [x] **4.1** Create demo user accounts (via seed script)
-- [x] **4.2** Pre-populate with sample clients (via seed script)
-- [ ] **4.3** Document demo script/walkthrough
-- [ ] **4.4** Test full flow multiple times
-- [ ] **4.5** Deploy to Vercel (staging)
+- [x] **3.1** Validate Google OAuth authorize/callback/reconnect *(code-path validated; state ownership + return-path hardening added)*
+- [x] **3.2** Validate Meta OAuth authorize/callback/reconnect *(code-path validated; state ownership + return-path hardening added)*
+- [x] **3.3** Validate token refresh cron for both providers *(cron refresh flow verified in code)*
+- [ ] **3.4** Validate revoked/expired token handling *(runtime provider-account test pending)*
 
----
+### Phase 4: Sync and Data Integrity (Day 5-7) - IN PROGRESS
+> Ensure reliable and accurate metric ingestion
 
-## Detailed Task Breakdown
+- [x] **4.1** Validate sync endpoint behavior per client *(auth/agency guard + per-platform sync summary response)*
+- [x] **4.2** Validate idempotent campaign metric upserts *(unique upsert key already enforced in sync service and schema)*
+- [x] **4.3** Validate retry/failure handling paths *(retry wrapper + partial-failure reporting implemented)*
+- [x] **4.4** Validate last-sync visibility in UI/API *(API now returns `syncedAt` + per-platform status; client UI toasts show results)*
 
-### Phase 1: Foundation
+### Phase 5: Analytics Dashboard Validation (Day 7-8) - IN PROGRESS
+> Confirm KPI accuracy for unified view
 
-#### 1.1 Google Cloud Setup
-```
-1. Go to https://console.cloud.google.com
-2. Create new project "SuperAdverts"
-3. Enable Google Ads API
-4. Create OAuth 2.0 credentials (Web application)
-5. Add authorized redirect URI: http://localhost:3000/api/integrations/google-ads/callback
-6. Note down Client ID and Client Secret
-```
+- [x] **5.1** Validate metric calculations against DB data *(dashboard summary wired to computed analytics values)*
+- [x] **5.2** Validate Google+Meta aggregate behavior *(campaign summaries now compute ROAS/CPA from aggregated spend+conversions)*
+- [ ] **5.3** Validate empty/stale-state UX *(runtime UI pass pending)*
 
-#### 1.2 Google Ads Developer Token
-```
-1. Go to https://ads.google.com/aw/apicenter
-2. Create API access (if not exists)
-3. Get developer token (starts with TEST token - limited but works for demo)
-4. For production, apply for basic access (takes 1-2 days)
-```
+### Phase 6: Reports Validation (Day 8-9) - IN PROGRESS
+> Validate reporting workflows
 
-#### 1.3 Environment Variables
-```env
-# .env.local
-DATABASE_URL="file:./dev.db"
-NEXTAUTH_SECRET="generate-random-32-char-string"
-NEXTAUTH_URL="http://localhost:3000"
+- [x] **6.1** Validate manual report generation *(client authorization + configurable days window now enforced)*
+- [x] **6.2** Validate report preview endpoint *(agency/super-admin access guard verified in code)*
+- [x] **6.3** Validate scheduled report cron flow *(generation + email path verified; failure tracking added)*
+- [x] **6.4** Validate report status updates and failures *(cron now reports `failed` count and failure reasons)*
 
-# Google Ads
-GOOGLE_CLIENT_ID="your-client-id"
-GOOGLE_CLIENT_SECRET="your-client-secret"
-GOOGLE_REDIRECT_URI="http://localhost:3000/api/integrations/google-ads/callback"
-GOOGLE_ADS_DEVELOPER_TOKEN="your-developer-token"
+### Phase 7: AI Insights Validation (Day 9-10) - IN PROGRESS
+> Validate provider setup and insight lifecycle
 
-# Token encryption (generate random strings)
-TOKEN_ENCRYPTION_KEY="32-character-random-string-here"
-OAUTH_STATE_SECRET="another-random-string-here"
+- [x] **7.1** Validate AI provider admin CRUD *(super-admin route guards and service validation verified in code)*
+- [x] **7.2** Validate provider fallback behavior *(priority-order provider fallback with mock fallback when providers fail)*
+- [x] **7.3** Validate insight generation API/UI *(client/agency/plan checks + generation path verified)*
+- [x] **7.4** Validate insight status lifecycle updates *(added `/api/insights` PATCH + UI status actions)*
 
-# AI Provider (pick one)
-OPENAI_API_KEY="sk-..."
-```
+### Phase 8: Pricing and System Config Validation (Day 10-11) - IN PROGRESS
+> Validate admin controls and entitlement behavior
 
-### Phase 2: Core Fixes
+- [x] **8.1** Validate pricing plan CRUD and activation flags *(admin API guards + service validation verified in code)*
+- [x] **8.2** Validate limit enforcement behavior in workflows *(client/user/AI limits verified; invite flow patched to include pending invites)*
+- [x] **8.3** Validate system config CRUD and JSON validation *(admin API guards + zod validation paths verified)*
 
-#### 2.1 Hide Meta Integration
-Files to modify:
-- `app/(protected)/dashboard/clients/page.tsx` - Hide Meta connect button
-- `components/forms/client-form.tsx` - Remove Meta fields
-- `app/(protected)/admin/integrations/page.tsx` - Hide Meta section
+### Phase 9: Final Regression and Release Gate (Day 11-12) - IN PROGRESS
+> Clear launch checklist with no critical defects
 
-#### 2.2 Dashboard Updates
-- Show only Google Ads metrics
-- Update "channels" to just show Google
-- Remove Meta-specific UI elements
-
-### Phase 3: Demo Polish
-
-#### 3.1 Seed Data Script
-Create realistic demo data:
-- 1 agency with Growth plan
-- 3 sample clients
-- 30 days of campaign metrics
-- 5-10 AI insights
-- 2-3 generated reports
-
-### Phase 4: Demo Flow
-
-#### Demo Script
-```
-1. Login as demo@superadverts.io
-2. Show dashboard with real metrics
-3. Navigate to Clients → Show 3 clients
-4. Click client → Show connected Google Ads
-5. Trigger sync → Show data flowing
-6. Go to Reports → Generate new report
-7. Go to Insights → Generate AI insight
-8. Show Admin panel → Pricing plans
-```
+- [ ] **9.1** Run full regression test matrix *(runtime/UAT environment execution pending)*
+- [ ] **9.2** Validate cron endpoints end-to-end *(runtime token + provider-account validation pending)*
+- [ ] **9.3** Confirm lint/build/test suite pass *(lint ✅, typecheck ✅ after tsconfig fix, build command currently non-deterministic in this shell)*
+- [ ] **9.4** UAT sign-off and release decision *(pending business sign-off)*
 
 ---
 
-## Files to Create/Modify
+## Functional Validation Checklist (Must Pass)
 
-### New Files Needed
-```
-prisma/seed.ts              # Demo data seeder
-scripts/setup-demo.ts       # Demo environment setup
-docs/demo-script.md         # Demo walkthrough guide
-```
-
-### Files to Modify
-```
-app/(protected)/dashboard/clients/page.tsx    # Hide Meta
-components/forms/client-form.tsx              # Google-only
-app/(protected)/dashboard/page.tsx            # Google metrics only
-lib/services/analytics.ts                     # Google-only queries
-app/(protected)/admin/integrations/page.tsx   # Hide Meta status
-```
+- [ ] Credentials auth + protected route behavior
+- [ ] Client/team/invitation workflows
+- [ ] Google OAuth + sync
+- [ ] Meta OAuth + sync
+- [ ] Unified dashboard metric correctness
+- [ ] Report generation + preview + scheduling
+- [ ] AI insight generation + status lifecycle
+- [ ] Pricing/system-config admin workflows
 
 ---
 
-## Success Criteria
+## Sprint Exit Criteria
 
-### MVP Demo Checklist
-- [ ] Can login with email/password
-- [ ] Can create a new client
-- [ ] Can connect Google Ads account via OAuth
-- [ ] Can sync campaign data from Google Ads
-- [ ] Dashboard shows real spend, clicks, impressions
-- [ ] Can generate a performance report
-- [ ] Can generate AI-powered insights
-- [ ] Can invite team members
-- [ ] Admin can configure pricing plans
-- [ ] No obvious errors or crashes
-
-### Investor Demo Points
-1. **Problem:** Agencies juggle multiple tools, no unified view
-2. **Solution:** Single dashboard for all ad accounts
-3. **Demo:** Live data from real Google Ads account
-4. **AI Value:** Auto-generated optimization insights
-5. **Business Model:** SaaS subscription tiers
-6. **Market:** 10,000+ agencies in India
-
----
-
-## Risk Mitigation
-
-| Risk | Mitigation |
-|------|------------|
-| Google OAuth fails | Test with personal ad account first |
-| No ad account for demo | Use Google Ads test account or partner's |
-| API rate limits | Cache responses, limit sync frequency |
-| AI insights fail | Have fallback static insights |
-
----
-
-## Post-MVP (After Demo)
-
-Once you have investor/customer interest:
-1. Add Razorpay payment integration
-2. Re-enable Meta integration (when approved)
-3. Add more platforms (LinkedIn, etc.)
-4. Build mobile app
-5. Implement white-label reports
-
----
-
-## Quick Start Commands
-
-```bash
-# Install dependencies
-npm install
-
-# Generate Prisma client
-npx prisma generate
-
-# Run migrations
-npx prisma migrate dev
-
-# Seed demo data (after creating seed script)
-npx prisma db seed
-
-# Start development server
-npm run dev
-
-# Build for production
-npm run build
-```
-
----
-
-**Start with Phase 1 today. Each phase builds on the previous one.**
+- [ ] No P0/P1 defects in core user/admin flows
+- [ ] All functional validation checklist items pass
+- [ ] `npm run lint`, `npm run typecheck`, and `npm run build` pass
+- [ ] Release readiness sign-off completed

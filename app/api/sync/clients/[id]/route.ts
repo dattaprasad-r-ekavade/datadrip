@@ -35,7 +35,8 @@ export async function POST(_request: NextRequest, { params }: RouteParams) {
 
   try {
     const summary = await SyncService.syncClient(id);
-    return NextResponse.json(summary);
+    const hasFailure = !summary.meta.success || !summary.google.success;
+    return NextResponse.json(summary, { status: hasFailure ? 207 : 200 });
   } catch (error) {
     console.error("Sync failed:", error);
     return NextResponse.json({ error: "Sync failed" }, { status: 500 });

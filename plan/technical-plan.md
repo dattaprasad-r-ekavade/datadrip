@@ -2,7 +2,7 @@
 
 ## 1. Architecture Overview
 - **Frontend**: Next.js 13 (App Router) deployed on Vercel with static + SSR/ISR pages, Tailwind CSS, shadcn/ui components for consistent design system.
-- **Backend**: Next.js API Route Handlers and server actions, Prisma ORM with SQLite in development and MySQL (PlanetScale/Aurora Serverless) in production. Background tasks via Vercel Cron + serverless queues (Upstash/QStash) for scheduled sync/reporting.
+- **Backend**: Next.js API Route Handlers and server actions, Prisma ORM with SQLite in development and Turso (LibSQL) in production. Background tasks via Vercel Cron for scheduled sync/reporting.
 - **Data ingestion**: OAuth to Meta Marketing API & Google Ads API, scheduled sync jobs storing normalized metrics.
 - **Reporting engine**: Serverless functions generating daily HTML templates, sending via transactional email service (Resend/SendGrid).
 - **AI layer**: Multi-provider LLM support (OpenAI, Anthropic, Google Gemini, Azure OpenAI) with admin-configurable API keys and model selection. AI features can be toggled on/off per agency. Guardrails invoked through serverless functions, cached recommendations per client.
@@ -12,7 +12,7 @@
 ## 2. Development Environments
 - **Local**: Next.js dev server, SQLite file-based DB (`prisma/dev.db`), `.env.local` storing API keys and OAuth secrets (use `dotenv-cli`).
 - **Preview**: Vercel preview deployments triggered from Git branches, using a shared MySQL sandbox and feature-flag toggles.
-- **Production**: Vercel production deployment, PlanetScale MySQL (primary), Redis (Upstash) for caching tokens and job queues, encrypted env vars managed through Vercel dashboard.
+- **Production**: Vercel production deployment with Turso (LibSQL), encrypted env vars managed through Vercel dashboard.
 
 ## 3. Data Model (Prisma Schema Draft)
 ```prisma
@@ -169,8 +169,8 @@ enum AIProviderType { OPENAI ANTHROPIC GOOGLE_GEMINI AZURE_OPENAI }
 ## 4. Feature Implementation Plan
 ### Sprint 1 (Weeks 1–2) — Project Setup & Auth
 - Bootstrap Next.js 13 app with TypeScript, Tailwind, shadcn/ui, configure ESLint/Prettier + Husky pre-commit hooks.
-- Set up Prisma schema, migrations (`prisma migrate dev` for SQLite), PlanetScale branch workflow for prod.
-- Implement authentication using NextAuth (Email magic link + optional passwordless) with role-based access.
+- Set up Prisma schema and migrations (`prisma migrate dev` for SQLite, deploy migrations to Turso for production).
+- Implement authentication using NextAuth credentials flow with role-based access.
 - Build base layout (dashboard shell, sidebar, top nav) with shadcn components.
 
 ### Sprint 2 (Weeks 3–4) — Agency & Client Management
@@ -238,7 +238,7 @@ enum AIProviderType { OPENAI ANTHROPIC GOOGLE_GEMINI AZURE_OPENAI }
 
 ## 5. Integrations & External Services
 - **OAuth**: Meta Marketing API, Google Ads API; use separate apps with secured redirect URIs.
-- **Email**: Resend or SendGrid (IN accounts) for daily reports, onboarding sequences, authentication magic links.
+- **Email**: Resend or SendGrid (IN accounts) for daily reports and product notifications.
 - **AI**: Multi-provider support with admin-configurable switching:
   - OpenAI (GPT-4o mini/GPT-4o) - Primary recommendation
   - Anthropic Claude (Haiku/Sonnet/Opus)

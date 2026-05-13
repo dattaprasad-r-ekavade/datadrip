@@ -153,13 +153,28 @@ export default function ClientsPage() {
         method: "POST",
       });
 
-      if (!response.ok) {
+      if (!response.ok && response.status !== 207) {
         throw new Error("Failed to sync client");
       }
 
+      const summary = (await response.json()) as {
+        syncedAt: string;
+        meta: { synced: number; attempted: boolean; success: boolean; error?: string };
+        google: { synced: number; attempted: boolean; success: boolean; error?: string };
+      };
+
+      const syncedParts = [
+        summary.google.attempted ? `Google: ${summary.google.synced}` : "Google: not connected",
+        summary.meta.attempted ? `Meta: ${summary.meta.synced}` : "Meta: not connected",
+      ];
+      const failureParts = [summary.google.error, summary.meta.error].filter(Boolean);
+
       toast({
-        title: "Sync started",
-        description: "Client data sync completed successfully.",
+        title: failureParts.length > 0 ? "Sync completed with warnings" : "Sync completed",
+        description:
+          failureParts.length > 0
+            ? `${syncedParts.join(" · ")}. ${failureParts.join(" | ")}`
+            : syncedParts.join(" · "),
       });
     } catch {
       toast({

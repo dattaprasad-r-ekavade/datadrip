@@ -23,6 +23,10 @@ import { cn } from "@/lib/utils";
 
 const formatCurrency = (value: number) =>
   new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR" }).format(value);
+const formatCompact = (value: number) =>
+  new Intl.NumberFormat("en-IN", { notation: "compact", maximumFractionDigits: 1 }).format(value);
+const formatDelta = (value: number | null) =>
+  value === null ? "N/A" : `${value >= 0 ? "+" : ""}${value.toFixed(1)}%`;
 
 export default async function DashboardPage() {
   const session = await requireSession();
@@ -53,32 +57,32 @@ export default async function DashboardPage() {
   const metrics = [
     {
       title: "Total Ad Spend",
-      value: formatCurrency(summary.spend || 48520),
-      change: "+12.5%",
-      trend: "up",
+      value: formatCurrency(summary.spend),
+      change: formatDelta(summary.spendChangePct),
+      trend: (summary.spendChangePct ?? 0) >= 0 ? "up" : "down",
       icon: DollarSign,
-      color: "text-green-500",
+      color: (summary.spendChangePct ?? 0) >= 0 ? "text-green-500" : "text-red-500",
     },
     {
       title: "Impressions",
-      value: "2.45L",
-      change: "+8.3%",
+      value: formatCompact(summary.impressions),
+      change: "Last 7 days",
       trend: "up",
       icon: Eye,
       color: "text-blue-500",
     },
     {
       title: "Clicks",
-      value: "7,350",
-      change: "+15.2%",
+      value: formatCompact(summary.clicks),
+      change: `CTR ${summary.ctr.toFixed(2)}%`,
       trend: "up",
       icon: MousePointer,
       color: "text-purple-500",
     },
     {
       title: "Conversions",
-      value: "264",
-      change: "+22.8%",
+      value: formatCompact(summary.conversions),
+      change: summary.cpa ? `CPA ${formatCurrency(summary.cpa)}` : "CPA N/A",
       trend: "up",
       icon: ShoppingCart,
       color: "text-orange-500",
@@ -87,7 +91,7 @@ export default async function DashboardPage() {
 
   const quickStats = [
     { label: "Active Clients", value: clientCount || 3, icon: Users },
-    { label: "Avg. ROAS", value: `${(summary.roas || 3.8).toFixed(1)}x`, icon: TrendingUp },
+    { label: "Avg. ROAS", value: `${(summary.roas ?? 0).toFixed(2)}x`, icon: TrendingUp },
     { label: "AI Insights", value: recentInsights.length || 6, icon: Bot },
   ];
 
@@ -124,9 +128,13 @@ export default async function DashboardPage() {
             <CardContent>
               <div className="text-2xl font-bold">{metric.value}</div>
               <div className="flex items-center gap-1 text-sm">
-                <ArrowUp className="h-4 w-4 text-green-500" />
-                <span className="text-green-500">{metric.change}</span>
-                <span className="text-muted-foreground">vs last 7 days</span>
+                <ArrowUp className={`h-4 w-4 ${metric.trend === "up" ? "text-green-500" : "text-red-500"}`} />
+                <span className={metric.trend === "up" ? "text-green-500" : "text-red-500"}>
+                  {metric.change}
+                </span>
+                <span className="text-muted-foreground">
+                  {metric.title === "Total Ad Spend" ? "vs previous 7 days" : ""}
+                </span>
               </div>
             </CardContent>
           </Card>

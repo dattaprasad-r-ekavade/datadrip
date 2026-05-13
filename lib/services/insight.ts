@@ -172,4 +172,30 @@ export class InsightService {
       },
     });
   }
+
+  static async listAll() {
+    return prisma.insight.findMany({
+      orderBy: { createdAt: "desc" },
+      include: {
+        client: {
+          select: { id: true, name: true },
+        },
+      },
+    });
+  }
+
+  static async updateStatus(insightId: string, status: "PENDING" | "IN_PROGRESS" | "RESOLVED" | "DISMISSED") {
+    return prisma.insight.update({
+      where: { id: insightId },
+      data: {
+        status,
+        resolvedAt: status === "RESOLVED" ? new Date() : null,
+      },
+      include: {
+        client: {
+          select: { id: true, name: true, agencyId: true },
+        },
+      },
+    });
+  }
 }

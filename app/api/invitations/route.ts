@@ -45,7 +45,15 @@ export async function POST(request: NextRequest) {
 
   const agency = await prisma.agency.findUnique({
     where: { id: user.agencyId },
-    select: { id: true, plan: true, _count: { select: { users: true } } },
+    select: {
+      id: true,
+      plan: true,
+      _count: {
+        select: {
+          users: true,
+        },
+      },
+    },
   });
 
   if (!agency) {
@@ -53,7 +61,15 @@ export async function POST(request: NextRequest) {
   }
 
   const plan = await PricingService.getPlanForAgency(agency);
-  if (plan?.userLimit && agency._count.users >= plan.userLimit) {
+  const pendingInvitesCount = await prisma.invitation.count({
+    where: {
+      agencyId: agency.id,
+      acceptedAt: null,
+      expiresAt: { gt: new Date() },
+    },
+  });
+
+  if (plan?.userLimit && agency._count.users + pendingInvitesCount >= plan.userLimit) {
     return NextResponse.json(
       { error: "User limit reached for current plan" },
       { status: 403 }

@@ -18,8 +18,8 @@ export interface CampaignSummary {
   impressions: number;
   clicks: number;
   conversions: number;
-  roas?: number | null;
-  cpa?: number | null;
+  roas: number | null;
+  cpa: number | null;
 }
 
 const startOfDay = (value: Date) => {
@@ -114,14 +114,20 @@ export class AnalyticsService {
       take: limit,
     });
 
-    return rows.map((row) => ({
+    return rows.map((row) => {
+      const spend = Number(row._sum.spend ?? 0);
+      const conversions = Number(row._sum.conversions ?? 0);
+      return {
       platform: row.platform,
       campaignId: row.campaignId,
-      spend: Number(row._sum.spend ?? 0),
+      spend,
       impressions: Number(row._sum.impressions ?? 0),
       clicks: Number(row._sum.clicks ?? 0),
-      conversions: Number(row._sum.conversions ?? 0),
-    })) as CampaignSummary[];
+      conversions,
+      roas: spend > 0 ? conversions / spend : null,
+      cpa: conversions > 0 ? spend / conversions : null,
+      };
+    }) as CampaignSummary[];
   }
 
   static async getSpendTrend(

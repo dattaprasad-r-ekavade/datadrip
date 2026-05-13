@@ -46,31 +46,24 @@ This document outlines all the external services, API keys, configurations, and 
   - Location: `prisma/dev.db`
 
 ### Production
-- **PlanetScale** (Recommended)
-  - **URL**: https://planetscale.com
+- **Turso (LibSQL)** (Current Production Setup)
+  - **URL**: https://turso.tech
   - **What you need**:
-    - Create account
-    - Create database: `superadverts-prod`
-    - Create branch: `main` for production
-    - Create branch: `dev` for development/testing
-  - **Get from PlanetScale**:
-    - `DATABASE_URL` connection string
-  - **Features needed**:
-    - Free tier sufficient for MVP
-    - Upgrade to Scaler plan for production scaling
-
-**Alternative**: 
-- **Railway.app MySQL** or **Supabase PostgreSQL**
-  - Similar setup process
-  - Get connection string
+    - Turso database URL
+    - Turso auth token
+  - **Environment variables**:
+    - `TURSO_DATABASE_URL`
+    - `TURSO_AUTH_TOKEN`
 
 ### Configuration Required
 ```env
 # Development
 DATABASE_URL="file:./dev.db"
 
-# Production
-DATABASE_URL="mysql://user:password@host/database?sslaccept=strict"
+# Production (Turso)
+TURSO_DATABASE_URL="libsql://<db-name>-<org>.turso.io"
+TURSO_AUTH_TOKEN="<token>"
+DATABASE_URL="libsql://<db-name>-<org>.turso.io"
 ```
 
 ---
@@ -838,7 +831,7 @@ ENCRYPTION_KEY="your_32_byte_encryption_key_for_tokens"
 - [ ] **Authentication**
   - [ ] Generate NEXTAUTH_SECRET
   - [ ] Set up email provider (Resend/SendGrid)
-  - [ ] Test magic link login
+  - [ ] Test credentials login
   
 - [ ] **Meta Integration**
   - [ ] Create Meta Developer app

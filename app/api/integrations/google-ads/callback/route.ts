@@ -20,6 +20,25 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "Invalid state" }, { status: 400 });
   }
 
+  const [user, client] = await Promise.all([
+    prisma.user.findUnique({
+      where: { id: state.userId },
+      select: { id: true, agencyId: true, isSuperAdmin: true },
+    }),
+    prisma.client.findUnique({
+      where: { id: state.clientId },
+      select: { id: true, agencyId: true },
+    }),
+  ]);
+
+  if (!user || !client) {
+    return NextResponse.json({ error: "Invalid OAuth state context" }, { status: 400 });
+  }
+
+  if (!user.isSuperAdmin && user.agencyId !== client.agencyId) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+
   const tokenResponse = await exchangeGoogleCode(code);
   const customerId = await fetchAccessibleCustomerId(tokenResponse.access_token);
 
@@ -56,5 +75,10 @@ export async function GET(request: NextRequest) {
     },
   });
 
-  return NextResponse.redirect(new URL(state.returnTo ?? "/dashboard/clients", request.url));
+  const returnTo =
+    state.returnTo && state.returnTo.startsWith("/")
+      ? state.returnTo
+      : "/dashboard/clients";
+
+  return NextResponse.redirect(new URL(returnTo, request.url));
 }

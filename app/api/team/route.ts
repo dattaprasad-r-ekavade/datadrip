@@ -50,6 +50,25 @@ export async function PATCH(request: NextRequest) {
     return NextResponse.json({ error: "User ID and role required" }, { status: 400 });
   }
 
+  const targetUser = await prisma.user.findUnique({
+    where: { id: body.userId },
+    select: { id: true, agencyId: true, isSuperAdmin: true },
+  });
+
+  if (!targetUser) {
+    return NextResponse.json({ error: "User not found" }, { status: 404 });
+  }
+
+  // Non-super-admin users can only update team members inside their own agency.
+  if (!currentUser.isSuperAdmin && targetUser.agencyId !== currentUser.agencyId) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+
+  // Never allow changing role for super-admin accounts through agency-level endpoint.
+  if (targetUser.isSuperAdmin) {
+    return NextResponse.json({ error: "Cannot modify super admin role here" }, { status: 403 });
+  }
+
   const updated = await prisma.user.update({
     where: { id: body.userId },
     data: { role: body.role },

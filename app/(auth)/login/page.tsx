@@ -20,12 +20,12 @@ export default async function LoginPage() {
           <h1 className="text-4xl font-semibold tracking-tight sm:text-5xl">Sign in to SuperAdverts</h1>
           <p className="text-lg text-muted-foreground">
             Connect Meta and Google Ads, automate weekly reporting, and deliver ready-to-act
-            insights for your clients. Enter your work email to receive a secure magic link.
+            insights for your clients. Sign in with your work email and password.
           </p>
           <div className="flex flex-wrap justify-center gap-4 text-sm text-muted-foreground lg:justify-start">
-            <span>?? Email-based authentication</span>
-            <span>?? AI insights across ad platforms</span>
-            <span>?? Super admin controls</span>
+            <span>Credentials authentication</span>
+            <span>AI insights across ad platforms</span>
+            <span>Super admin controls</span>
           </div>
         </div>
         <LoginForm />

@@ -32,6 +32,8 @@ export async function POST(request: NextRequest) {
 
   let generated = 0;
   let emailed = 0;
+  let failed = 0;
+  const failures: Array<{ clientId: string; reason: string }> = [];
 
   for (const client of clients) {
     try {
@@ -43,17 +45,34 @@ export async function POST(request: NextRequest) {
         client.agency.users[0]?.email;
 
       if (recipient) {
-        await sendEmail({
-          to: recipient,
-          subject: `Weekly report: ${client.name}`,
-          html: report.reportHtml,
-        });
-        emailed += 1;
+        try {
+          await sendEmail({
+            to: recipient,
+            subject: `Weekly report: ${client.name}`,
+            html: report.reportHtml,
+          });
+          emailed += 1;
+        } catch (emailError) {
+          failed += 1;
+          failures.push({
+            clientId: client.id,
+            reason:
+              emailError instanceof Error
+                ? `email failed: ${emailError.message}`
+                : "email failed",
+          });
+          console.error("Report email failed:", emailError);
+        }
       }
     } catch (error) {
+      failed += 1;
+      failures.push({
+        clientId: client.id,
+        reason: error instanceof Error ? error.message : "report generation failed",
+      });
       console.error("Report generation failed:", error);
     }
   }
 
-  return NextResponse.json({ generated, emailed });
+  return NextResponse.json({ generated, emailed, failed, failures });
 }

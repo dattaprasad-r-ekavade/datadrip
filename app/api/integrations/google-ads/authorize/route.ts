@@ -12,7 +12,11 @@ export async function GET(request: NextRequest) {
 
   const { searchParams } = new URL(request.url);
   const clientId = searchParams.get("clientId");
-  const returnTo = searchParams.get("returnTo") ?? "/dashboard/clients";
+  const requestedReturnTo = searchParams.get("returnTo");
+  const returnTo =
+    requestedReturnTo && requestedReturnTo.startsWith("/")
+      ? requestedReturnTo
+      : "/dashboard/clients";
 
   if (!clientId) {
     return NextResponse.json({ error: "Client ID required" }, { status: 400 });

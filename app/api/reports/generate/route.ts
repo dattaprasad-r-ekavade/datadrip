@@ -9,10 +9,15 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const body = (await request.json()) as { clientId?: string };
+  const body = (await request.json()) as { clientId?: string; days?: number };
   if (!body.clientId) {
     return NextResponse.json({ error: "Client ID required" }, { status: 400 });
   }
+
+  const days =
+    typeof body.days === "number" && Number.isFinite(body.days)
+      ? Math.min(90, Math.max(1, Math.floor(body.days)))
+      : 7;
 
   const client = await prisma.client.findUnique({
     where: { id: body.clientId },
@@ -33,7 +38,7 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    const report = await ReportService.generateForClient(body.clientId, 7);
+    const report = await ReportService.generateForClient(body.clientId, days);
     return NextResponse.json(report, { status: 201 });
   } catch (error) {
     console.error("Manual report generation failed:", error);

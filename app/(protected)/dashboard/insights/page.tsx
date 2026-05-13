@@ -110,6 +110,37 @@ export default function InsightsPage() {
     }
   };
 
+  const handleStatusUpdate = async (
+    insightId: string,
+    status: "PENDING" | "IN_PROGRESS" | "RESOLVED" | "DISMISSED"
+  ) => {
+    try {
+      const response = await fetch("/api/insights", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: insightId, status }),
+      });
+
+      if (!response.ok) {
+        const payload = await response.json().catch(() => ({}));
+        throw new Error(payload.error ?? "Failed to update insight status");
+      }
+
+      toast({
+        title: "Insight updated",
+        description: `Status set to ${status.replace(/_/g, " ").toLowerCase()}.`,
+      });
+
+      await loadInsights();
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: (error as Error).message ?? "Failed to update insight status.",
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
     <div className="container mx-auto py-8">
       <div className="mb-8">
@@ -195,6 +226,29 @@ export default function InsightsPage() {
                   </div>
                   <div className="mt-1 text-xs text-muted-foreground">
                     Provider: {insight.aiProvider ?? "—"} · Model: {insight.aiModel ?? "—"}
+                  </div>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => handleStatusUpdate(insight.id, "IN_PROGRESS")}
+                    >
+                      In Progress
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => handleStatusUpdate(insight.id, "RESOLVED")}
+                    >
+                      Resolve
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => handleStatusUpdate(insight.id, "DISMISSED")}
+                    >
+                      Dismiss
+                    </Button>
                   </div>
                 </div>
               ))}
