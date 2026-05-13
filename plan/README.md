@@ -1,8 +1,8 @@
-# DataDrip MVP - Planning Documentation
+# SuperAdverts MVP - Planning Documentation
 
 ## 📁 Document Overview
 
-This folder contains all planning and technical documentation for the DataDrip MVP project. Use this README to navigate to the right document for your needs.
+This folder contains all planning and technical documentation for the SuperAdverts MVP project. Use this README to navigate to the right document for your needs.
 
 ---
 
@@ -281,7 +281,7 @@ This folder contains all planning and technical documentation for the DataDrip M
 
 ### Related Project Files
 - **Product Vision**: `../idea.md` - Original product concept
-- **Repository**: GitHub - datadrip (main branch)
+- **Repository**: GitHub - superadverts (main branch)
 
 ### External Documentation
 - **Next.js**: https://nextjs.org/docs
@@ -377,7 +377,7 @@ Before starting development, ensure you've:
 
 ---
 
-**Project**: DataDrip MVP
+**Project**: SuperAdverts MVP
 **Timeline**: 17 weeks
 **Team**: Development Team
 **Last Updated**: October 26, 2025

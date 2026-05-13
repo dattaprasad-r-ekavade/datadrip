@@ -55,7 +55,7 @@ export default function InsightsPage() {
         setClients(data.clients ?? []);
         setSelectedClient(data.clients?.[0]?.id ?? "");
         await loadInsights();
-      } catch (error) {
+      } catch {
         toast({
           title: "Error",
           description: "Failed to load insights data.",

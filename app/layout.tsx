@@ -19,9 +19,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "DataDrip | Marketing Intelligence for Agencies",
+  title: "SuperAdverts | Marketing Intelligence for Agencies",
   description:
-    "DataDrip brings Meta and Google Ads data together with AI-driven insights so agency teams can make decisions faster.",
+    "SuperAdverts brings Meta and Google Ads data together with AI-driven insights so agency teams can make decisions faster.",
 };
 
 export default function RootLayout({

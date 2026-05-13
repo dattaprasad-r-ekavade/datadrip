@@ -139,7 +139,7 @@ export default function PricingAdminPage() {
         throw new Error("Delete failed");
       }
       await loadPlans();
-    } catch (error) {
+    } catch {
       toast({
         title: "Error",
         description: "Failed to delete plan.",
@@ -159,7 +159,7 @@ export default function PricingAdminPage() {
         throw new Error("Update failed");
       }
       await loadPlans();
-    } catch (error) {
+    } catch {
       toast({
         title: "Error",
         description: "Failed to update plan status.",

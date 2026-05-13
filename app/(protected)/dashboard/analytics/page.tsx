@@ -4,18 +4,14 @@ import { useState } from "react";
 import {
   ArrowDown,
   ArrowUp,
-  BarChart3,
   DollarSign,
   Eye,
   MousePointer,
   ShoppingCart,
-  TrendingUp,
 } from "lucide-react";
 import {
   Area,
   AreaChart,
-  Bar,
-  BarChart,
   CartesianGrid,
   Cell,
   Legend,

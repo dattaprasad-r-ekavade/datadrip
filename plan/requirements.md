@@ -1,7 +1,7 @@
-# DataDrip MVP - Requirements & Configuration Guide
+# SuperAdverts MVP - Requirements & Configuration Guide
 
 ## Overview
-This document outlines all the external services, API keys, configurations, and setup requirements needed to build and deploy the DataDrip MVP platform.
+This document outlines all the external services, API keys, configurations, and setup requirements needed to build and deploy the SuperAdverts MVP platform.
 
 ---
 
@@ -50,7 +50,7 @@ This document outlines all the external services, API keys, configurations, and 
   - **URL**: https://planetscale.com
   - **What you need**:
     - Create account
-    - Create database: `datadrip-prod`
+    - Create database: `superadverts-prod`
     - Create branch: `main` for production
     - Create branch: `dev` for development/testing
   - **Get from PlanetScale**:
@@ -184,7 +184,7 @@ META_API_VERSION="v18.0"
 #### Setup Steps
 1. **Create Google Cloud Project**
    - Go to: https://console.cloud.google.com
-   - Create new project: "DataDrip"
+   - Create new project: "SuperAdverts"
    
 2. **Enable Google Ads API**
    - In project → APIs & Services → Library
@@ -533,7 +533,7 @@ QSTASH_NEXT_SIGNING_KEY="your_next_signing_key"
    
 2. **Create Project**
    - Select "Next.js"
-   - Name: "DataDrip"
+   - Name: "SuperAdverts"
    
 3. **Get DSN**
    - From project settings
@@ -621,7 +621,7 @@ LOGTAIL_SOURCE_TOKEN="your_logtail_source_token"
    
 2. **Connect Repository**
    - Import Git repository
-   - Select "DataDrip" project
+   - Select "SuperAdverts" project
    
 3. **Configure Project**
    - Framework: Next.js (auto-detected)

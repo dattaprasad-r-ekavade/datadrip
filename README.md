@@ -1,4 +1,4 @@
-# DataDrip MVP
+# SuperAdverts MVP
 
 Marketing analytics platform foundation for agencies managing Meta and Google Ads accounts. Sprint 1 delivers the authenticated Next.js application shell with Prisma, magic-link authentication, and the admin-ready dashboard experience.
 

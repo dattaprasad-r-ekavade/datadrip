@@ -78,8 +78,8 @@ export async function POST(request: NextRequest) {
 
     await sendEmail({
       to: invitation.email,
-      subject: "You're invited to DataDrip",
-      html: `<p>You have been invited to DataDrip. <a href="${inviteUrl}">Accept invitation</a>.</p>`,
+      subject: "You're invited to SuperAdverts",
+      html: `<p>You have been invited to SuperAdverts. <a href="${inviteUrl}">Accept invitation</a>.</p>`,
     });
 
     return NextResponse.json(invitation, { status: 201 });

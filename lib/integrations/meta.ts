@@ -3,10 +3,19 @@ import { env } from "@/lib/env";
 const META_GRAPH_BASE = `https://graph.facebook.com/${env.META_API_VERSION}`;
 const META_OAUTH_BASE = `https://www.facebook.com/${env.META_API_VERSION}/dialog/oauth`;
 
+const requireEnv = (value: string | undefined, name: string) => {
+  if (!value) {
+    throw new Error(`${name} is not configured`);
+  }
+  return value;
+};
+
 export const buildMetaAuthUrl = (state: string) => {
+  const metaAppId = requireEnv(env.META_APP_ID, "META_APP_ID");
+  const metaRedirectUri = requireEnv(env.META_REDIRECT_URI, "META_REDIRECT_URI");
   const url = new URL(META_OAUTH_BASE);
-  url.searchParams.set("client_id", env.META_APP_ID);
-  url.searchParams.set("redirect_uri", env.META_REDIRECT_URI);
+  url.searchParams.set("client_id", metaAppId);
+  url.searchParams.set("redirect_uri", metaRedirectUri);
   url.searchParams.set("state", state);
   url.searchParams.set("response_type", "code");
   url.searchParams.set("scope", env.META_SCOPES);
@@ -14,10 +23,13 @@ export const buildMetaAuthUrl = (state: string) => {
 };
 
 export const exchangeMetaCode = async (code: string) => {
+  const metaAppId = requireEnv(env.META_APP_ID, "META_APP_ID");
+  const metaRedirectUri = requireEnv(env.META_REDIRECT_URI, "META_REDIRECT_URI");
+  const metaAppSecret = requireEnv(env.META_APP_SECRET, "META_APP_SECRET");
   const url = new URL(`${META_GRAPH_BASE}/oauth/access_token`);
-  url.searchParams.set("client_id", env.META_APP_ID);
-  url.searchParams.set("redirect_uri", env.META_REDIRECT_URI);
-  url.searchParams.set("client_secret", env.META_APP_SECRET);
+  url.searchParams.set("client_id", metaAppId);
+  url.searchParams.set("redirect_uri", metaRedirectUri);
+  url.searchParams.set("client_secret", metaAppSecret);
   url.searchParams.set("code", code);
 
   const response = await fetch(url.toString());
@@ -30,10 +42,12 @@ export const exchangeMetaCode = async (code: string) => {
 };
 
 export const exchangeForLongLivedToken = async (accessToken: string) => {
+  const metaAppId = requireEnv(env.META_APP_ID, "META_APP_ID");
+  const metaAppSecret = requireEnv(env.META_APP_SECRET, "META_APP_SECRET");
   const url = new URL(`${META_GRAPH_BASE}/oauth/access_token`);
   url.searchParams.set("grant_type", "fb_exchange_token");
-  url.searchParams.set("client_id", env.META_APP_ID);
-  url.searchParams.set("client_secret", env.META_APP_SECRET);
+  url.searchParams.set("client_id", metaAppId);
+  url.searchParams.set("client_secret", metaAppSecret);
   url.searchParams.set("fb_exchange_token", accessToken);
 
   const response = await fetch(url.toString());

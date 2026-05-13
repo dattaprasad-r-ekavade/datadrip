@@ -36,7 +36,7 @@ export default function ReportsPage() {
           setClients(clientData.clients ?? []);
           setSelectedClient(clientData.clients?.[0]?.id ?? "");
         }
-      } catch (error) {
+      } catch {
         toast({
           title: "Error",
           description: "Failed to load reports.",
@@ -76,7 +76,7 @@ export default function ReportsPage() {
       });
       const data = await response.json();
       setReports((prev) => [data, ...prev]);
-    } catch (error) {
+    } catch {
       toast({
         title: "Error",
         description: "Failed to generate report.",

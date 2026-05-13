@@ -1,4 +1,4 @@
-# DataDrip MVP - Development Setup
+# SuperAdverts MVP - Development Setup
 
 ## Sprint 1 Complete ✅
 

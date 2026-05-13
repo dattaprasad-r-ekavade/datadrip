@@ -4,10 +4,19 @@ const GOOGLE_AUTH_BASE = "https://accounts.google.com/o/oauth2/v2/auth";
 const GOOGLE_TOKEN_URL = "https://oauth2.googleapis.com/token";
 const GOOGLE_ADS_BASE = "https://googleads.googleapis.com/v18";
 
+const requireEnv = (value: string | undefined, name: string) => {
+  if (!value) {
+    throw new Error(`${name} is not configured`);
+  }
+  return value;
+};
+
 export const buildGoogleAuthUrl = (state: string) => {
+  const googleClientId = requireEnv(env.GOOGLE_CLIENT_ID, "GOOGLE_CLIENT_ID");
+  const googleRedirectUri = requireEnv(env.GOOGLE_REDIRECT_URI, "GOOGLE_REDIRECT_URI");
   const url = new URL(GOOGLE_AUTH_BASE);
-  url.searchParams.set("client_id", env.GOOGLE_CLIENT_ID);
-  url.searchParams.set("redirect_uri", env.GOOGLE_REDIRECT_URI);
+  url.searchParams.set("client_id", googleClientId);
+  url.searchParams.set("redirect_uri", googleRedirectUri);
   url.searchParams.set("response_type", "code");
   url.searchParams.set("scope", "https://www.googleapis.com/auth/adwords");
   url.searchParams.set("access_type", "offline");
@@ -25,11 +34,14 @@ export interface GoogleTokenResponse {
 }
 
 export const exchangeGoogleCode = async (code: string) => {
+  const googleClientId = requireEnv(env.GOOGLE_CLIENT_ID, "GOOGLE_CLIENT_ID");
+  const googleClientSecret = requireEnv(env.GOOGLE_CLIENT_SECRET, "GOOGLE_CLIENT_SECRET");
+  const googleRedirectUri = requireEnv(env.GOOGLE_REDIRECT_URI, "GOOGLE_REDIRECT_URI");
   const body = new URLSearchParams({
     code,
-    client_id: env.GOOGLE_CLIENT_ID,
-    client_secret: env.GOOGLE_CLIENT_SECRET,
-    redirect_uri: env.GOOGLE_REDIRECT_URI,
+    client_id: googleClientId,
+    client_secret: googleClientSecret,
+    redirect_uri: googleRedirectUri,
     grant_type: "authorization_code",
   });
 
@@ -48,10 +60,12 @@ export const exchangeGoogleCode = async (code: string) => {
 };
 
 export const refreshGoogleToken = async (refreshToken: string) => {
+  const googleClientId = requireEnv(env.GOOGLE_CLIENT_ID, "GOOGLE_CLIENT_ID");
+  const googleClientSecret = requireEnv(env.GOOGLE_CLIENT_SECRET, "GOOGLE_CLIENT_SECRET");
   const body = new URLSearchParams({
     refresh_token: refreshToken,
-    client_id: env.GOOGLE_CLIENT_ID,
-    client_secret: env.GOOGLE_CLIENT_SECRET,
+    client_id: googleClientId,
+    client_secret: googleClientSecret,
     grant_type: "refresh_token",
   });
 
@@ -70,10 +84,11 @@ export const refreshGoogleToken = async (refreshToken: string) => {
 };
 
 export const fetchAccessibleCustomerId = async (accessToken: string) => {
+  const developerToken = requireEnv(env.GOOGLE_ADS_DEVELOPER_TOKEN, "GOOGLE_ADS_DEVELOPER_TOKEN");
   const response = await fetch(`${GOOGLE_ADS_BASE}/customers:listAccessibleCustomers`, {
     headers: {
       Authorization: `Bearer ${accessToken}`,
-      "developer-token": env.GOOGLE_ADS_DEVELOPER_TOKEN,
+      "developer-token": developerToken,
     },
   });
 
@@ -100,6 +115,7 @@ export interface GoogleCampaignMetricRow {
 }
 
 export const fetchGoogleCampaignMetrics = async (accessToken: string, customerId: string) => {
+  const developerToken = requireEnv(env.GOOGLE_ADS_DEVELOPER_TOKEN, "GOOGLE_ADS_DEVELOPER_TOKEN");
   const query = `
     SELECT
       campaign.id,
@@ -118,7 +134,7 @@ export const fetchGoogleCampaignMetrics = async (accessToken: string, customerId
       method: "POST",
       headers: {
         Authorization: `Bearer ${accessToken}`,
-        "developer-token": env.GOOGLE_ADS_DEVELOPER_TOKEN,
+        "developer-token": developerToken,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ query }),

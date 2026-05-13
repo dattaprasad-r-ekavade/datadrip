@@ -97,7 +97,7 @@ export default function TeamPage() {
         throw new Error("Failed to update role");
       }
       await loadData();
-    } catch (error) {
+    } catch {
       toast({
         title: "Error",
         description: "Failed to update role.",

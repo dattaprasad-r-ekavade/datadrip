@@ -1,6 +1,7 @@
 import NextAuth from "next-auth";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import type { Adapter } from "next-auth/adapters";
+import type { Role } from "@prisma/client";
 import Credentials from "next-auth/providers/credentials";
 import { compare } from "bcryptjs";
 
@@ -79,7 +80,7 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
     session: async ({ session, token }) => {
       if (session.user && token) {
         session.user.id = token.id as string;
-        session.user.role = token.role as any;
+        session.user.role = token.role as Role;
         session.user.isSuperAdmin = token.isSuperAdmin as boolean;
         session.user.agencyId = token.agencyId as string | null;
       }

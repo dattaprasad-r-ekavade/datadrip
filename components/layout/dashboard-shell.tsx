@@ -65,7 +65,7 @@ export function DashboardShell({ user, children }: DashboardShellProps) {
       <Sidebar collapsible="icon">
         <SidebarHeader>
           <div className="space-y-1">
-            <SidebarGroupLabel className="text-lg font-semibold">DataDrip</SidebarGroupLabel>
+            <SidebarGroupLabel className="text-lg font-semibold">SuperAdverts</SidebarGroupLabel>
             <p className="text-xs text-muted-foreground">Connected marketing intelligence</p>
           </div>
         </SidebarHeader>
@@ -127,14 +127,14 @@ export function DashboardShell({ user, children }: DashboardShellProps) {
                   <AvatarFallback>{getInitials(user.name, user.email)}</AvatarFallback>
                 </Avatar>
                 <span className="hidden text-sm font-medium leading-none sm:block">
-                  {user.name ?? user.email ?? "DataDrip User"}
+                  {user.name ?? user.email ?? "SuperAdverts User"}
                 </span>
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56">
               <DropdownMenuLabel>
                 <div className="flex flex-col">
-                  <span className="text-sm font-semibold">{user.name ?? "DataDrip User"}</span>
+                  <span className="text-sm font-semibold">{user.name ?? "SuperAdverts User"}</span>
                   <span className="text-xs text-muted-foreground">{user.email}</span>
                 </div>
               </DropdownMenuLabel>

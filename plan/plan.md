@@ -1,7 +1,7 @@
-# DataDrip SaaS Blueprint
+# SuperAdverts SaaS Blueprint
 
 ## 1. Product Overview
-- **Product**: DataDrip — unified ad insights, automated reporting, AI recommendations for Meta & Google Ads.
+- **Product**: SuperAdverts — unified ad insights, automated reporting, AI recommendations for Meta & Google Ads.
 - **Target market**: Indian digital marketing agencies managing multiple SMB clients.
 - **Primary users**: Agency owners, performance marketers, client servicing managers who need daily visibility and actionable suggestions.
 
@@ -79,7 +79,7 @@
 ## 6. Go-To-Market Execution
 ### Low-Cost Acquisition Channels
 - **Founder-led outbound**: LinkedIn prospecting of Indian agency owners, personalized demos.
-- **Partner agencies**: Offer revenue sharing for marketing consultants who bundle DataDrip.
+- **Partner agencies**: Offer revenue sharing for marketing consultants who bundle SuperAdverts.
 - **Community marketing**: Host webinars on campaign optimization for Indian festive seasons, publish “Ad Pulse” newsletter.
 - **Product-led growth**: 14-day trial with usage-based onboarding emails highlighting missed optimizations.
 - **Case studies & testimonials**: Showcase ROI improvements from early design partners.

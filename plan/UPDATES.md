@@ -2,7 +2,7 @@
 
 ## Summary of Changes
 
-This document summarizes the major updates made to the DataDrip MVP planning documents to incorporate new admin features and multi-provider AI support.
+This document summarizes the major updates made to the SuperAdverts MVP planning documents to incorporate new admin features and multi-provider AI support.
 
 ---
 

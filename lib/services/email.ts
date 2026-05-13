@@ -21,7 +21,7 @@ export const sendEmail = async ({
   subject: string;
   html: string;
 }) => {
-  const from = process.env.EMAIL_FROM ?? "no-reply@datadrip.ai";
+  const from = process.env.EMAIL_FROM ?? "no-reply@superadverts.ai";
 
   await transporter.sendMail({
     from,

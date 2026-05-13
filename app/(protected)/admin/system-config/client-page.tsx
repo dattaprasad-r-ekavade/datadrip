@@ -76,7 +76,7 @@ export default function SystemConfigPage() {
         throw new Error("Failed to delete config");
       }
       await loadConfigs();
-    } catch (error) {
+    } catch {
       toast({
         title: "Error",
         description: "Failed to delete config.",

@@ -141,7 +141,7 @@ export class InsightService {
     if (!aiText) {
       const mock = getRandomMockInsight(type);
       aiText = mock.text;
-      aiProvider = "DataDrip AI";
+      aiProvider = "SuperAdverts AI";
       aiModel = "mock-v1";
       impactScore = mock.impact;
     }

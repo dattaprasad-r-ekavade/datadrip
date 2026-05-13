@@ -5,8 +5,6 @@ import {
   AlertTriangle,
   ArrowDown,
   ArrowUp,
-  BarChart3,
-  Eye,
   Globe,
   Lightbulb,
   Search,
@@ -139,7 +137,7 @@ export default function CompetitorsPage() {
             <Search className="h-5 w-5" />
             Track New Competitor
           </CardTitle>
-          <CardDescription>Enter a competitor's domain to start tracking their ads</CardDescription>
+          <CardDescription>Enter a competitor&apos;s domain to start tracking their ads</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="flex gap-4">
