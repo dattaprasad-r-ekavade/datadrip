@@ -17,6 +17,9 @@ const envSchema = z.object({
   GOOGLE_REDIRECT_URI: z.string().url("GOOGLE_REDIRECT_URI must be a valid URL").optional(),
   GOOGLE_ADS_DEVELOPER_TOKEN: z.string().optional(),
   CRON_SECRET: z.string().optional(),
+  CASHFREE_CLIENT_ID: z.string().optional(),
+  CASHFREE_CLIENT_SECRET: z.string().optional(),
+  CASHFREE_ENV: z.enum(["sandbox", "production"]).default("sandbox"),
 });
 
 const parsed = envSchema.safeParse({
@@ -35,6 +38,9 @@ const parsed = envSchema.safeParse({
   GOOGLE_REDIRECT_URI: process.env.GOOGLE_REDIRECT_URI,
   GOOGLE_ADS_DEVELOPER_TOKEN: process.env.GOOGLE_ADS_DEVELOPER_TOKEN,
   CRON_SECRET: process.env.CRON_SECRET,
+  CASHFREE_CLIENT_ID: process.env.CASHFREE_CLIENT_ID,
+  CASHFREE_CLIENT_SECRET: process.env.CASHFREE_CLIENT_SECRET,
+  CASHFREE_ENV: (process.env.CASHFREE_ENV as "sandbox" | "production") ?? "sandbox",
 });
 
 if (!parsed.success) {

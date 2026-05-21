@@ -1,109 +1,248 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
-import { Check, CreditCard, Download, Zap } from "lucide-react";
+import Script from "next/script";
+import { AlertTriangle, Check, CreditCard, Download, Loader2, Zap, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 
-const plans = [
-  {
-    id: "starter",
-    name: "Starter",
-    price: 2999,
-    period: "month",
-    description: "Perfect for freelancers and small agencies",
-    features: [
-      "5 client accounts",
-      "Google Ads integration",
-      "Basic AI insights (50/month)",
-      "Weekly reports",
-      "Email support",
-    ],
-    popular: false,
-  },
-  {
-    id: "growth",
-    name: "Growth",
-    price: 7999,
-    period: "month",
-    description: "For growing agencies with multiple clients",
-    features: [
-      "15 client accounts",
-      "Google Ads + Meta integration",
-      "Advanced AI insights (200/month)",
-      "Daily reports",
-      "White-label reports",
-      "Priority support",
-      "Team collaboration (5 users)",
-    ],
-    popular: true,
-  },
-  {
-    id: "scale",
-    name: "Scale",
-    price: 14999,
-    period: "month",
-    description: "For established agencies at scale",
-    features: [
-      "50 client accounts",
-      "All integrations",
-      "Unlimited AI insights",
-      "Real-time reports",
-      "Custom branding",
-      "Dedicated support",
-      "Unlimited team members",
-      "API access",
-    ],
-    popular: false,
-  },
-];
+declare global {
+  interface Window {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    Cashfree: any;
+  }
+}
 
-const invoices = [
-  { id: "INV-2026-001", date: "Jan 1, 2026", amount: 7999, status: "Paid" },
-  { id: "INV-2025-012", date: "Dec 1, 2025", amount: 7999, status: "Paid" },
-  { id: "INV-2025-011", date: "Nov 1, 2025", amount: 7999, status: "Paid" },
-  { id: "INV-2025-010", date: "Oct 1, 2025", amount: 2999, status: "Paid" },
-];
+interface BillingData {
+  agency: {
+    id: string;
+    name: string;
+    plan: string;
+    planExpiry: string | null;
+    billingStatus: string | null;
+    aiCreditsBalance: number | null;
+    gstin: string | null;
+    billingAddress: string | null;
+  };
+  currentPlanConfig: {
+    name: string;
+    price: number;
+    clientLimit: number | null;
+    userLimit: number | null;
+    aiCredits: number | null;
+  } | null;
+  stats: {
+    clientsUsed: number;
+    usersUsed: number;
+  };
+  invoices: Array<{
+    id: string;
+    date: string;
+    amount: number;
+    status: string;
+    planTier: string;
+  }>;
+  plans: Array<{
+    id: string;
+    tier: string;
+    name: string;
+    price: number;
+    period: string;
+    description: string;
+    features: string[];
+    popular: boolean;
+    clientLimit: number | null;
+    userLimit: number | null;
+    aiCredits: number | null;
+  }>;
+}
 
 export default function BillingPage() {
   const { data: session } = useSession();
   const isSuperAdmin = Boolean(session?.user?.isSuperAdmin);
-  const [currentPlan] = useState("growth");
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [showCheckout, setShowCheckout] = useState(false);
-  const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
   const { toast } = useToast();
 
-  const handleUpgrade = (planId: string) => {
-    setSelectedPlan(planId);
-    setShowCheckout(true);
+  const [billingData, setBillingData] = useState<BillingData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [isProcessing, setIsProcessing] = useState<string | null>(null);
+  const [isActivatingBeta, setIsActivatingBeta] = useState<string | null>(null);
+
+  // Fetch billing details from API
+  const fetchBillingData = async () => {
+    try {
+      const response = await fetch("/api/billing");
+      if (!response.ok) throw new Error("Failed to fetch billing info");
+      const result = await response.json();
+      setBillingData(result);
+    } catch (err) {
+      console.error(err);
+      toast({
+        variant: "destructive",
+        title: "Error loading billing details",
+        description: "Please check your network connection and try again.",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handlePayment = async () => {
-    setIsProcessing(true);
+  useEffect(() => {
+    fetchBillingData();
 
-    // Simulate Razorpay checkout
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+    // Read URL query params for payment status toasts
+    const searchParams = new URLSearchParams(window.location.search);
+    const status = searchParams.get("status");
+    const reason = searchParams.get("reason");
 
-    toast({
-      title: "Payment Successful!",
-      description: "Your plan has been upgraded successfully.",
-    });
+    if (status === "success") {
+      toast({
+        title: "Payment Successful!",
+        description: "Your agency plan has been activated successfully.",
+      });
+      // Clean query parameters from URL
+      window.history.replaceState({}, document.title, window.location.pathname);
+    } else if (status === "failed") {
+      toast({
+        variant: "destructive",
+        title: "Payment Failed",
+        description: reason ? `Payment failed with status: ${reason.toUpperCase()}` : "The transaction was unsuccessful.",
+      });
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-    setIsProcessing(false);
-    setShowCheckout(false);
+  const handleCheckout = async (planTier: string) => {
+    if (!window.Cashfree) {
+      toast({
+        variant: "destructive",
+        title: "Payment SDK is not loaded",
+        description: "Please wait a moment and try again.",
+      });
+      return;
+    }
+
+    setIsProcessing(planTier);
+
+    try {
+      const response = await fetch("/api/billing/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ planTier }),
+      });
+
+      if (!response.ok) {
+        const errData = await response.json();
+        throw new Error(errData.error || "Failed to initialize payment session");
+      }
+
+      const { paymentSessionId, cfEnv } = await response.json();
+
+      // Initialize Cashfree client-side SDK
+      const cashfree = window.Cashfree({
+        mode: cfEnv || "sandbox",
+      });
+
+      // Launch Cashfree hosted checkout page redirect
+      await cashfree.checkout({
+        paymentSessionId,
+        redirectTarget: "_self",
+      });
+    } catch (err) {
+      console.error(err);
+      toast({
+        variant: "destructive",
+        title: "Payment Initiation Failed",
+        description: err instanceof Error ? err.message : "Something went wrong.",
+      });
+      setIsProcessing(null);
+    }
+  };
+
+  const handleFreeBetaActivate = async (planTier: string) => {
+    setIsActivatingBeta(planTier);
+    try {
+      const response = await fetch("/api/billing/free-activate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ planTier }),
+      });
+
+      if (!response.ok) {
+        const errData = await response.json();
+        throw new Error(errData.error || "Failed to activate beta subscription");
+      }
+
+      const result = await response.json();
+      toast({
+        title: "Beta Plan Activated!",
+        description: `Successfully activated 30 days of ${planTier} plan with ${result.agency.aiCreditsBalance} AI credits.`,
+      });
+
+      // Refetch billing data to update UI
+      await fetchBillingData();
+    } catch (err) {
+      console.error(err);
+      toast({
+        variant: "destructive",
+        title: "Beta Activation Failed",
+        description: err instanceof Error ? err.message : "Something went wrong.",
+      });
+    } finally {
+      setIsActivatingBeta(null);
+    }
   };
 
   const formatCurrency = (amount: number) =>
-    new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR" }).format(amount);
+    new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR", maximumFractionDigits: 0 }).format(amount);
+
+  if (loading) {
+    return (
+      <div className="flex min-h-[60vh] items-center justify-center">
+        <div className="flex flex-col items-center gap-2">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          <p className="text-sm text-muted-foreground">Loading billing and subscription details...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!billingData) {
+    return (
+      <div className="container mx-auto py-8">
+        <Card className="border-destructive">
+          <CardHeader>
+            <CardTitle>Error Loading Billing</CardTitle>
+            <CardDescription>We could not pull billing data for this agency.</CardDescription>
+          </CardHeader>
+        </Card>
+      </div>
+    );
+  }
+
+  const { agency, currentPlanConfig, stats, invoices, plans } = billingData;
+
+  // Calculate remaining subscription days
+  let daysRemaining = 0;
+  let isExpired = false;
+  if (agency.planExpiry) {
+    const expiry = new Date(agency.planExpiry);
+    const today = new Date();
+    const diffTime = expiry.getTime() - today.getTime();
+    daysRemaining = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    isExpired = daysRemaining <= 0;
+  }
 
   return (
     <div className="container mx-auto py-8">
+      {/* Cashfree Web SDK Injection */}
+      <Script src="https://sdk.cashfree.com/js/v3/cashfree.js" strategy="lazyOnload" />
+
       {isSuperAdmin && (
-        <Card className="mb-6 border-blue-300 bg-blue-50">
+        <Card className="mb-6 border-blue-300 bg-blue-50/50 dark:bg-blue-950/20">
           <CardHeader>
             <CardTitle>Platform Admin View</CardTitle>
             <CardDescription>
@@ -117,99 +256,170 @@ export default function BillingPage() {
           </CardContent>
         </Card>
       )}
+
+      {isExpired && agency.plan !== "STARTER" && (
+        <Card className="mb-6 border-destructive bg-destructive/10">
+          <CardHeader className="flex flex-row items-center gap-3">
+            <AlertTriangle className="h-6 w-6 text-destructive" />
+            <div>
+              <CardTitle className="text-destructive">Plan Expired</CardTitle>
+              <CardDescription>
+                Your subscription expired on {new Date(agency.planExpiry!).toLocaleDateString("en-IN")}. Please renew to unlock your plan limits.
+              </CardDescription>
+            </div>
+          </CardHeader>
+        </Card>
+      )}
+
       <div className="mb-8">
         <h1 className="text-3xl font-bold">Billing & Subscription</h1>
         <p className="text-muted-foreground">
-          Manage your subscription, payment methods, and billing history.
+          Manage your prepaid credits, subscription level, and billing history.
         </p>
       </div>
 
-      {/* Current Plan Card */}
-      <Card className="mb-8 border-primary">
+      {/* Current Subscription Status Card */}
+      <Card className="mb-8 border-primary bg-gradient-to-br from-background to-primary/5">
         <CardHeader>
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             <div>
-              <CardTitle className="flex items-center gap-2">
-                <Zap className="h-5 w-5 text-primary" />
-                Current Plan: Growth
+              <CardTitle className="flex items-center gap-2 text-2xl font-bold">
+                <Zap className="h-6 w-6 text-primary animate-pulse" />
+                Current Plan: {agency.plan.charAt(0) + agency.plan.slice(1).toLowerCase()}
               </CardTitle>
-              <CardDescription>
-                Your subscription renews on February 1, 2026
+              <CardDescription className="mt-1">
+                {agency.planExpiry ? (
+                  isExpired ? (
+                    <span className="font-semibold text-destructive">Expired on {new Date(agency.planExpiry).toLocaleDateString("en-IN")}</span>
+                  ) : (
+                    <span>Prepaid cycle active until <strong className="text-foreground">{new Date(agency.planExpiry).toLocaleDateString("en-IN")}</strong></span>
+                  )
+                ) : (
+                  "Free Trial (No expiration set)"
+                )}
               </CardDescription>
             </div>
-            <div className="text-right">
-              <div className="text-2xl font-bold">₹7,999</div>
-              <div className="text-sm text-muted-foreground">per month</div>
+            <div className="text-left md:text-right">
+              <div className="text-3xl font-bold text-primary">
+                {currentPlanConfig ? formatCurrency(currentPlanConfig.price) : "₹0"}
+              </div>
+              <div className="text-xs text-muted-foreground">Prepaid 30-day cycle</div>
             </div>
           </div>
         </CardHeader>
         <CardContent>
-          <div className="grid gap-4 md:grid-cols-4">
-            <div className="rounded-lg bg-muted/50 p-4">
-              <div className="text-2xl font-bold">8/15</div>
-              <div className="text-sm text-muted-foreground">Clients used</div>
+          <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-4">
+            <div className="rounded-lg bg-muted/60 p-4 border border-border/40">
+              <div className="text-2xl font-bold">
+                {stats.clientsUsed}
+                {currentPlanConfig?.clientLimit ? ` / ${currentPlanConfig.clientLimit}` : " / 5"}
+              </div>
+              <div className="text-sm text-muted-foreground">Clients synced</div>
             </div>
-            <div className="rounded-lg bg-muted/50 p-4">
-              <div className="text-2xl font-bold">3/5</div>
+            <div className="rounded-lg bg-muted/60 p-4 border border-border/40">
+              <div className="text-2xl font-bold">
+                {stats.usersUsed}
+                {currentPlanConfig?.userLimit ? ` / ${currentPlanConfig.userLimit}` : " / 2"}
+              </div>
               <div className="text-sm text-muted-foreground">Team members</div>
             </div>
-            <div className="rounded-lg bg-muted/50 p-4">
-              <div className="text-2xl font-bold">142/200</div>
-              <div className="text-sm text-muted-foreground">AI insights used</div>
+            <div className="rounded-lg bg-muted/60 p-4 border border-border/40">
+              <div className="text-2xl font-bold text-primary">
+                {agency.aiCreditsBalance !== null ? agency.aiCreditsBalance : "Unlimited"}
+              </div>
+              <div className="text-sm text-muted-foreground">AI credits balance</div>
             </div>
-            <div className="rounded-lg bg-muted/50 p-4">
-              <div className="text-2xl font-bold">18</div>
-              <div className="text-sm text-muted-foreground">Days until renewal</div>
+            <div className="rounded-lg bg-muted/60 p-4 border border-border/40">
+              <div className="text-2xl font-bold">
+                {agency.planExpiry && !isExpired ? `${daysRemaining} days` : "0 days"}
+              </div>
+              <div className="text-sm text-muted-foreground">Active days left</div>
             </div>
           </div>
         </CardContent>
       </Card>
 
-      {/* Plans */}
+      {/* Available Pricing Plans */}
       <div className="mb-8">
-        <h2 className="mb-4 text-xl font-semibold">Available Plans</h2>
+        <h2 className="mb-4 text-xl font-semibold">Available Prepaid Packages</h2>
         <div className="grid gap-6 md:grid-cols-3">
           {plans.map((plan) => (
             <Card
               key={plan.id}
-              className={`relative ${
-                plan.popular ? "border-primary shadow-lg" : "border-border/60"
-              } ${currentPlan === plan.id ? "ring-2 ring-primary" : ""}`}
+              className={`relative flex flex-col justify-between ${
+                plan.popular ? "border-primary shadow-lg ring-1 ring-primary/20" : "border-border/60"
+              } ${agency.plan === plan.tier ? "ring-2 ring-primary bg-primary/5" : ""}`}
             >
               {plan.popular && (
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-primary px-3 py-1 text-xs font-medium text-primary-foreground">
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-primary px-3 py-1 text-xs font-semibold text-primary-foreground">
                   Most Popular
                 </div>
               )}
-              {currentPlan === plan.id && (
-                <div className="absolute -top-3 right-4 rounded-full bg-green-500 px-3 py-1 text-xs font-medium text-white">
-                  Current
+              {agency.plan === plan.tier && (
+                <div className="absolute -top-3 right-4 rounded-full bg-green-500 px-3 py-1 text-xs font-semibold text-white">
+                  Active Plan
                 </div>
               )}
-              <CardHeader>
-                <CardTitle>{plan.name}</CardTitle>
-                <CardDescription>{plan.description}</CardDescription>
-                <div className="mt-4">
-                  <span className="text-3xl font-bold">₹{plan.price.toLocaleString()}</span>
-                  <span className="text-muted-foreground">/{plan.period}</span>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <ul className="space-y-2">
-                  {plan.features.map((feature) => (
-                    <li key={feature} className="flex items-center gap-2 text-sm">
-                      <Check className="h-4 w-4 text-primary" />
-                      {feature}
+              <div>
+                <CardHeader>
+                  <CardTitle className="text-xl">{plan.name}</CardTitle>
+                  <CardDescription className="min-h-[40px]">{plan.description}</CardDescription>
+                  <div className="mt-4">
+                    <span className="text-3xl font-bold">{formatCurrency(plan.price)}</span>
+                    <span className="text-muted-foreground">/ 30 Days</span>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <ul className="space-y-3">
+                    <li className="flex items-center gap-2 text-sm font-medium text-primary">
+                      <Zap className="h-4 w-4 shrink-0" />
+                      {plan.aiCredits ? `${plan.aiCredits} AI insights credits` : "Unlimited AI insights"}
                     </li>
-                  ))}
-                </ul>
+                    {plan.features.map((feature) => (
+                      <li key={feature} className="flex items-start gap-2 text-sm">
+                        <Check className="h-4 w-4 shrink-0 text-green-500 mt-0.5" />
+                        <span>{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </CardContent>
+              </div>
+              <CardContent className="pt-0 flex flex-col gap-2">
                 <Button
                   className="mt-6 w-full"
-                  variant={currentPlan === plan.id ? "outline" : plan.popular ? "default" : "outline"}
-                  disabled={currentPlan === plan.id}
-                  onClick={() => handleUpgrade(plan.id)}
+                  variant={agency.plan === plan.tier ? "outline" : plan.popular ? "default" : "outline"}
+                  disabled={isProcessing !== null || isActivatingBeta !== null}
+                  onClick={() => handleCheckout(plan.tier)}
                 >
-                  {currentPlan === plan.id ? "Current Plan" : plan.price > 7999 ? "Upgrade" : "Downgrade"}
+                  {isProcessing === plan.tier ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Connecting...
+                    </>
+                  ) : agency.plan === plan.tier ? (
+                    "Renew Cycle (30 Days)"
+                  ) : (
+                    `Select ${plan.name}`
+                  )}
+                </Button>
+
+                <Button
+                  className="w-full border-dashed border-primary/40 hover:border-primary/80 text-primary hover:bg-primary/5 gap-2"
+                  variant="outline"
+                  disabled={isProcessing !== null || isActivatingBeta !== null}
+                  onClick={() => handleFreeBetaActivate(plan.tier)}
+                >
+                  {isActivatingBeta === plan.tier ? (
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      Activating...
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles className="h-4 w-4 text-primary animate-pulse" />
+                      Activate Free (Beta)
+                    </>
+                  )}
                 </Button>
               </CardContent>
             </Card>
@@ -217,145 +427,68 @@ export default function BillingPage() {
         </div>
       </div>
 
-      {/* Payment Method */}
-      <Card className="mb-8">
+      {/* Prepaid Credit Warning for individual launcher */}
+      <Card className="mb-8 border-border bg-muted/30">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <CreditCard className="h-5 w-5" />
-            Payment Method
-          </CardTitle>
-          <CardDescription>Manage your payment methods</CardDescription>
+          <CardTitle className="text-lg">Prepaid Credit-based Renewals</CardTitle>
+          <CardDescription>
+            Because we do not capture recurring auto-debit details (keeping compliance lightweight and domain registration-free), your services are on a prepaid cycle. You can extend your credits or renew your subscription tier at any time by selecting your desired package above.
+          </CardDescription>
         </CardHeader>
-        <CardContent>
-          <div className="flex items-center justify-between rounded-lg border p-4">
-            <div className="flex items-center gap-4">
-              <div className="flex h-12 w-16 items-center justify-center rounded bg-gradient-to-r from-blue-600 to-blue-800 text-white text-xs font-bold">
-                VISA
-              </div>
-              <div>
-                <div className="font-medium">Visa ending in 4242</div>
-                <div className="text-sm text-muted-foreground">Expires 12/2027</div>
-              </div>
-            </div>
-            <Button variant="outline" size="sm">
-              Update
-            </Button>
-          </div>
-          <Button variant="ghost" className="mt-4">
-            + Add new payment method
-          </Button>
-        </CardContent>
       </Card>
 
-      {/* Billing History */}
+      {/* Transaction & Billing History */}
       <Card>
         <CardHeader>
           <CardTitle>Billing History</CardTitle>
-          <CardDescription>Download invoices and view past payments</CardDescription>
+          <CardDescription>Download tax receipts and view past payments</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="space-y-4">
-            {invoices.map((invoice) => (
-              <div
-                key={invoice.id}
-                className="flex items-center justify-between rounded-lg border p-4"
-              >
-                <div>
-                  <div className="font-medium">{invoice.id}</div>
-                  <div className="text-sm text-muted-foreground">{invoice.date}</div>
-                </div>
-                <div className="flex items-center gap-4">
-                  <div className="text-right">
-                    <div className="font-medium">{formatCurrency(invoice.amount)}</div>
-                    <div className="text-sm text-green-600">{invoice.status}</div>
+          {invoices.length === 0 ? (
+            <div className="flex h-32 flex-col items-center justify-center rounded-lg border border-dashed border-border/80 text-muted-foreground">
+              <CreditCard className="mb-2 h-8 w-8 text-muted-foreground/60" />
+              <span>No transactions recorded yet.</span>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {invoices.map((invoice) => (
+                <div
+                  key={invoice.id}
+                  className="flex items-center justify-between rounded-lg border p-4 hover:bg-muted/30 transition-all duration-150"
+                >
+                  <div>
+                    <div className="font-semibold text-foreground">{invoice.id}</div>
+                    <div className="text-sm text-muted-foreground">{invoice.date}</div>
                   </div>
-                  <Button variant="ghost" size="sm">
-                    <Download className="h-4 w-4" />
-                  </Button>
+                  <div className="flex items-center gap-4">
+                    <div className="text-right">
+                      <div className="font-semibold">{formatCurrency(invoice.amount)}</div>
+                      <div
+                        className={`text-sm font-medium ${
+                          invoice.status === "PAID"
+                            ? "text-green-600"
+                            : invoice.status === "FAILED"
+                              ? "text-red-500"
+                              : "text-amber-500"
+                        }`}
+                      >
+                        {invoice.status}
+                      </div>
+                    </div>
+                    {invoice.status === "PAID" && (
+                      <Button variant="ghost" size="sm" asChild>
+                        <a href={`/api/billing/invoice/${invoice.id}`} target="_blank" rel="noopener noreferrer">
+                          <Download className="h-4 w-4" />
+                        </a>
+                      </Button>
+                    )}
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </CardContent>
       </Card>
-
-      {/* Razorpay Checkout Modal */}
-      {showCheckout && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-          <Card className="w-full max-w-md">
-            <CardHeader>
-              <CardTitle>Complete Payment</CardTitle>
-              <CardDescription>
-                Upgrade to {plans.find((p) => p.id === selectedPlan)?.name} plan
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="rounded-lg bg-muted p-4">
-                <div className="flex justify-between">
-                  <span>Plan</span>
-                  <span className="font-medium">
-                    {plans.find((p) => p.id === selectedPlan)?.name}
-                  </span>
-                </div>
-                <div className="mt-2 flex justify-between">
-                  <span>Amount</span>
-                  <span className="font-medium">
-                    ₹{plans.find((p) => p.id === selectedPlan)?.price.toLocaleString()}
-                  </span>
-                </div>
-                <div className="mt-2 flex justify-between">
-                  <span>GST (18%)</span>
-                  <span className="font-medium">
-                    ₹{Math.round((plans.find((p) => p.id === selectedPlan)?.price || 0) * 0.18).toLocaleString()}
-                  </span>
-                </div>
-                <div className="mt-2 flex justify-between border-t pt-2 font-bold">
-                  <span>Total</span>
-                  <span>
-                    ₹{Math.round((plans.find((p) => p.id === selectedPlan)?.price || 0) * 1.18).toLocaleString()}
-                  </span>
-                </div>
-              </div>
-
-              <div className="rounded-lg border p-4">
-                <div className="mb-2 text-sm font-medium">Pay with Razorpay</div>
-                <div className="flex items-center gap-2">
-                  <div className="h-8 w-12 rounded bg-blue-600 flex items-center justify-center text-white text-xs font-bold">
-                    VISA
-                  </div>
-                  <div className="h-8 w-12 rounded bg-red-600 flex items-center justify-center text-white text-xs font-bold">
-                    MC
-                  </div>
-                  <div className="h-8 w-12 rounded bg-purple-600 flex items-center justify-center text-white text-xs font-bold">
-                    UPI
-                  </div>
-                  <div className="h-8 w-12 rounded bg-green-600 flex items-center justify-center text-white text-xs font-bold">
-                    NB
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex gap-4">
-                <Button
-                  variant="outline"
-                  className="flex-1"
-                  onClick={() => setShowCheckout(false)}
-                  disabled={isProcessing}
-                >
-                  Cancel
-                </Button>
-                <Button
-                  className="flex-1"
-                  onClick={handlePayment}
-                  disabled={isProcessing}
-                >
-                  {isProcessing ? "Processing..." : "Pay Now"}
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      )}
     </div>
   );
 }

@@ -36,32 +36,32 @@ export async function POST(request: NextRequest) {
   try {
     const agency = await prisma.agency.findUnique({
       where: { id: client.agencyId },
-      select: { id: true, plan: true },
+      select: { id: true, plan: true, aiCreditsBalance: true },
     });
 
     if (agency) {
-      const { PricingService } = await import("@/lib/services/pricing");
-      const plan = await PricingService.getPlanForAgency(agency);
-      if (plan?.aiCredits) {
-        const startOfMonth = new Date();
-        startOfMonth.setDate(1);
-        startOfMonth.setHours(0, 0, 0, 0);
-        const used = await prisma.insight.count({
-          where: {
-            client: { agencyId: agency.id },
-            createdAt: { gte: startOfMonth },
-          },
-        });
-        if (used >= plan.aiCredits) {
-          return NextResponse.json(
-            { error: "AI insight limit reached for current plan" },
-            { status: 403 }
-          );
-        }
+      if (agency.aiCreditsBalance !== null && agency.aiCreditsBalance <= 0) {
+        return NextResponse.json(
+          { error: "Insufficient AI credits. Please purchase credits or renew your plan." },
+          { status: 403 }
+        );
       }
     }
 
     const insight = await InsightService.generateForClient(body.clientId, body.type);
+
+    // Decrement credits if billing has a cap
+    if (agency && agency.aiCreditsBalance !== null) {
+      await prisma.agency.update({
+        where: { id: agency.id },
+        data: {
+          aiCreditsBalance: {
+            decrement: 1
+          }
+        }
+      });
+    }
+
     return NextResponse.json(insight, { status: 201 });
   } catch (error) {
     console.error("Failed to generate insight:", error);
